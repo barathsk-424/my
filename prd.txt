@@ -1,0 +1,516 @@
+# Product Requirements Document (PRD)  
+Birthday Surprise Website – “Love, Laughter & Forever”  
+Version 1.0  Master Level · UIUX Advanced (Love Theme) · 40-Page Detailed Blueprint
+
+---
+
+## Table of Contents
+
+1. [Executive Summary](#1-executive-summary)  
+2. [Project Vision & Strategy](#2-project-vision--strategy)  
+   2.1 Vision Statement  
+   2.2 Mission & Emotional Impact  
+   2.3 Success Metrics  
+3. [Target Audience & Personas](#3-target-audience--personas)  
+   3.1 Primary Recipient  
+   3.2 Secondary Audience  
+   3.3 Empathy Map  
+4. [User Journey & Emotional Storyboard](#4-user-journey--emotional-storyboard)  
+   4.1 Entry & Anticipation  
+   4.2 Interaction & Play  
+   4.3 Memory Lane  
+   4.4 Heartfelt Message  
+   4.5 Grand Finale & Surprise  
+5. [Functional Requirements](#5-functional-requirements)  
+   5.1 Global Features (Music, UI, Easter Eggs)  
+   5.2 Hero Section  
+   5.3 Interactive Section (Balloons, Candles, Gift Box)  
+   5.4 Memories Section (Photo GallerySlideshow)  
+   5.5 Personal Message Section  
+   5.6 Grand Finale Section  
+   5.7 Countdown Timer & Background Music  
+   5.8 Confetti & Floating Elements  
+   5.9 Typewriter Text Effect  
+   5.10 Responsive & Mobile-First Layout  
+6. [UIUX Design Guidelines – Advanced Love Theme](#6-uiux-design-guidelines--advanced-love-theme)  
+   6.1 Design Principles  
+   6.2 Color Palette  
+   6.3 Typography  
+   6.4 Iconography & Illustrations  
+   6.5 Micro-Interactions & Animations  
+   6.6 Accessibility & Inclusivity  
+   6.7 Mobile Responsiveness (40-Page Equivalent Adaptivity)  
+   6.8 Visual Hierarchy & Spacing  
+7. [Technical Architecture](#7-technical-architecture)  
+   7.1 Frontend Stack  
+   7.2 Animation Libraries  
+   7.3 Media Handling & Optimization  
+   7.4 State Management  
+   7.5 Browser Compatibility  
+   7.6 Performance Budget  
+8. [Content & Asset Requirements](#8-content--asset-requirements)  
+   8.1 Photography  
+   8.2 Music & Sound Design  
+   8.3 Personal Message Copy  
+   8.4 Video Production  
+9. [Feature Breakdown & Interaction Flow](#9-feature-breakdown--interaction-flow)  
+   9.1 Hero – Start Button  
+   9.2 Pop Balloons Mini-Game  
+   9.3 Blow Out Candles (Microphone  Touch)  
+   9.4 Open Gift Box (Drag  Tap)  
+   9.5 Photo Gallery & Slideshow  
+   9.6 Typewriter Love Letter  
+   9.7 Grand Finale Surprise  
+   9.8 Hidden Easter Eggs  
+10. [Development Approach & Roadmap](#10-development-approach--roadmap)  
+    10.1 Phases & Milestones  
+    10.2 Sprint Plan (Advanced Coding)  
+    10.3 No-Code  Low-Code Adaptations  
+11. [Testing Strategy](#11-testing-strategy)  
+    11.1 Device & Browser Matrix  
+    11.2 User Testing Scenarios  
+    11.3 Performance & Load Testing  
+12. [Deployment & Hosting](#12-deployment--hosting)  
+13. [Maintenance & Post-Launch](#13-maintenance--post-launch)  
+14. [Appendices](#14-appendices)  
+    14.1 Wireframe Sketches (Descriptive)  
+    14.2 Asset Checklist  
+    14.3 Glossary  
+
+---
+
+## 1. Executive Summary
+
+The Birthday Surprise Website is an immersive, emotion-driven single‑page (or story‑like multi‑view) experience designed to celebrate a loved one’s birthday. It combines interactive mini‑games, personalized multimedia, and advanced UIUX loveliness to take the user on a narrative journey from a warm welcome, through playful interactions, nostalgic memories, a heartfelt message, and finally a grand surprise finale.
+
+This PRD outlines every pixel, every micro‑interaction, and every heartbeat of the experience. It is crafted at a master level, with an advanced love‑centered design language, robust functional specifications, and a mobile‑first responsive strategy that feels like a 40‑page love letter in itself.
+
+---
+
+## 2. Project Vision & Strategy
+
+### 2.1 Vision Statement
+Create the most memorable birthday experience on a screen – a digital hug that blends nostalgia, surprise, and genuine human emotion into a few minutes of magic.
+
+### 2.2 Mission & Emotional Impact
+- Emotional Flow Anticipation → Delight → Nostalgia → Tearful Joy → Ecstatic Surprise.
+- Core Message “You are deeply loved, and here is our story.”
+- Differentiator Not a static gallery, but a living journey guided by interactions that mimic real‑world gestures (popping balloons, blowing candles, unwrapping gifts).
+
+### 2.3 Success Metrics
+- Recipient completes the entire experience (funnel from start to finale).
+- Average time on page 4 minutes.
+- Interaction rate every interactive element engaged at least once.
+- Emotional response (sent via message) smile, laugh, cry, “I love you”.
+
+---
+
+## 3. Target Audience & Personas
+
+### 3.1 Primary Recipient
+Name The Birthday Star  
+Age 16–40 (adjustable)  
+Tech Level Comfortable with touch & mouse, uses smartphone predominantly  
+Emotional State Expecting a simple “Happy Birthday” message; unaware of the interactive depth
+
+### 3.2 Secondary Audience
+- Creator  Sender Partner, best friend, or close family member who curates the content.
+- Potential Viewers Friends who might see the screen share or the link later.
+
+### 3.3 Empathy Map
+- Thinks “Oh, a birthday link… let’s see.” → “Wait, I can pop balloons!” → “These are our memories…” → “This letter made me tear up” → “Did they really make a video for me!”
+- Feels Curiosity, child‑like joy, warmth, love, overwhelming happiness.
+- Sees Soft pastels, glowing lights, their own photos, animated hearts.
+- Does Taps, drags, blows, smiles, scrolls, replays.
+
+---
+
+## 4. User Journey & Emotional Storyboard
+
+The journey is a linear narrative, but the user can pause and explore. Each step builds emotional momentum.
+
+### 4.1 Entry & Anticipation
+- User opens link → soft loader with heart animation → “Happy Birthday ❤️” fades in.
+- Hero photo of the birthday person (or couple) with gentle parallax.
+- Button “Are You Ready” pulsing softly. Background plays quiet instrumental.
+
+### 4.2 Interaction & Play
+- Pop Balloons A cluster of colorful balloons floats up. User tapspops them. Each pop releases a tiny confetti burst and a floating memory keyword (e.g., “First Date”, “That Trip”).
+- Blow Out Candles A virtual birthday cake appears. User must blow (using microphone or long‑press) to extinguish candles. Success triggers a sparkle animation.
+- Open Gift Box A beautifully wrapped gift box sits center. User drags ribbon or taps to open. Inside a mini photo or a clue leading to the Memories section.
+
+### 4.3 Memory Lane
+- Smooth photo slideshowgallery with transition effects (fade, ken burns).
+- Photos arranged in a narrative order (first meeting → funny moments → special events).
+- Optional captions floating in with a typewriter effect.
+
+### 4.4 Heartfelt Message
+- A virtual letter appears, written line by line with a typewriter effect, accompanied by soft music.
+- Background animated falling petals or floating hearts.
+- At the end, a “Read More” reveals the full message gracefully.
+
+### 4.5 Grand Finale & Surprise
+- Either an embedded video (birthday montage) or an animated gift box that reveals a final message “Forever & Always 💍  My wish for you…  See you at 7 PM 😉”
+- Confetti explosion, music swells, and a large “I Love You” appears.
+
+---
+
+## 5. Functional Requirements
+
+### 5.1 Global Features
+- Background Music Autoplay (muted by default, unmute button). Toggle onoff. Song user‑supplied mp3. Looping.
+- Floating Elements Random heartsballoons moving across screen (CSS animation, non‑interactive).
+- Confetti Trigger After key milestones (balloon pop, candle blow, gift open, finale).
+- Page Loading LottieJSON heart loader, 2s transition.
+- Responsive Mobile (768px), Tablet, Desktop (1200px). Touch + mouse.
+- Easter Eggs Hidden long‑press on hero photo reveals a secret message; triple‑tap on “Birthday” text shows a special emoji rain.
+
+### 5.2 Hero Section
+- Full-viewport hero with parallax background image (blurred, dark overlay).
+- Animated text “Happy Birthday ❤️” (fade-in-up, maybe handwriting SVG).
+- Subtext “To the one who makes life beautiful” (typewriter).
+- CTA button “Are You Ready” with heartbeat scale animation.
+- Scroll indicator (subtle bouncing arrow).
+
+### 5.3 Interactive Section
+#### 5.3.1 Pop Balloons 🎈
+- CanvasCSS balloons rendered (4–8 balloons), semi‑random positions.
+- Clicktap to pop; balloon deflates, particle burst, +1 counter.
+- All popped Celebration animation and auto‑scroll to next section.
+- Sound effect gentle pop (optional, synced with user action).
+- Mobile touch events; prevent zoom interference.
+
+#### 5.3.2 Blow Out Candles 🕯️
+- Display a cake with lit candles (CSS flames flickering).
+- Desktop Hold spacebar or click and blow via microphone (Web Audio API detect amplitude).  
+- Mobile Long‑press button or blow into mic (prompt for permission). Fallback button “Blow” that simulates breath with animation.
+- Candles extinguish one by one with a smoke puff animation.
+- All out → sparklers, confetti, “Make a Wish” text appears.
+
+#### 5.3.3 Open Gift Box 🎁
+- 3D‑like gift box illustration (CSS transforms).
+- User drags ribbon (on touch, slide finger) or taps to open.
+- Box lid lifts, glow emerges, a photo or a hidden clue floats out.
+- Perfect for revealing a “next step” or a personal inside joke.
+
+### 5.4 Memories Section (Photo GallerySlideshow)
+- Horizontal swiper  vertical scroll gallery.
+- Images preloaded, lazy‑loaded; smooth crossfade or parallax transitions.
+- Control auto‑advance (5s) with pause on hovertouch; manual arrowsdots.
+- Caption overlay with subtle fade‑in.
+- Lightbox tap to enlarge, pinch to zoom, swipe to dismiss.
+- “Our Story” chronological order.
+
+### 5.5 Personal Message Section
+- Designer paper background (soft texture).
+- Typewriter effect text appears character by character, cursor blinking.
+- User can “hurry” by tappingclicking to reveal full text.
+- Background ambient floating rose petals or falling stars.
+- Option to add a personal signature (handwritten style font).
+- After full reveal, a heart gradually fills (like a like button).
+
+### 5.6 Grand Finale Section
+- Option A Video Surprise  
+  Embedded YouTubeVimeo video (muted, with unmute). Custom thumbnail overlay. Play button triggers confetti.
+- Option B Animated Gift Box Surprise  
+  Another gift box, bigger and more elaborate. After interaction, final message scrolls out on a ribbon “You are my greatest adventure. Happy Birthday, my love.”
+- Followed by full-screen confetti and looping floating “I ❤️ You” in multiple languages.
+- Social share button (“Tell the world how special you are” – optional).
+
+### 5.7 Countdown Timer & Background Music
+- Countdown timer to the exact birthday moment (if configured). Shown as a subtle overlay. When it hits zero, special message triggers.
+- Music user‑selected track. Controls playpause, volume slider. Icon small musical note in corner.
+
+### 5.8 Confetti & Floating Elements
+- Confetti library (canvas-confetti) triggered at key moments.
+- Persistent floating heartsballoons using CSS keyframes, z‑index behind content.
+
+### 5.9 Typewriter Text Effect
+- Used in Hero subtitle, captions, personal message.
+- Speed adjustable, with backspace corrections for a human touch.
+- Sounds optional soft typewriter clicks (subtle).
+
+### 5.10 Responsive & Mobile‑First Layout
+- Single‑column scroll narrative on mobile.
+- All interactive elements optimized for touch larger hit areas, no hover‑only actions.
+- Cake candle blow adapted long‑press or dedicated button.
+- Gift box drag simple swipe up.
+- Gallery swipe gesture with finger.
+- Hero takes 100vh, typography scales using clamp().
+- Navigation dotsarrows redesigned for thumb reach.
+
+---
+
+## 6. UIUX Design Guidelines – Advanced Love Theme
+
+### 6.1 Design Principles
+- Emotion First Every color, animation, and transition is crafted to evoke warmth, romance, and tenderness.
+- Depth & Tangibility Use soft shadows, glassmorphism, and realistic physics‑like interactions (balloon pop, ribbon drag).
+- Storytelling Flow feels like turning pages of a personal fairy tale.
+- Delightful Surprise Micro‑interactions hidden in plain sight.
+
+### 6.2 Color Palette
+- Primary Soft Blush Pink (#FFD1DC)  
+- Accent 1 Warm Coral (#FF6F61)  
+- Accent 2 Romantic Gold (#D4AF37)  
+- Background Cream (#FFF8F0) or Deep Night Blue (#1A1A2E) for contrast sections  
+- Text Deep Brown (#4A2C2A) or Soft White  
+- Overlay Semi‑transparent love gradients (pink to coral).
+
+### 6.3 Typography
+- Headings ‘Playfair Display’ or ‘Dancing Script’ (cursive romantic) for special phrases.
+- Body ‘Lora’ or ‘Poppins’ for readability.
+- Typewriter Effect ‘Courier Prime’ or ‘Special Elite’ for the message.
+- Sizes follow modular scale, responsive.
+
+### 6.4 Iconography & Illustrations
+- Hand‑drawn style hearts, stars, balloons, and gift boxes.
+- Custom Lottie animations for candle flames, gift unwrapping.
+- Use Font Awesome for generic icons with a custom pastel color.
+
+### 6.5 Micro‑Interactions & Animations
+ Element  Animation  TimingEasing 
+-----------------------------------
+ Hero title  Fade in + slide up + subtle scale  1s ease-out 
+ Button “Are You Ready”  Pulse (heartbeat scale)  2s infinite alternate 
+ Balloon pop  Burst particles + scale to 0  0.3s 
+ Candle flame  Flicker (opacity & transform)  randomized 
+ Gift box open  Lid rotation -120deg, glow  0.8s cubic-bezier 
+ Photo transition  Crossfade + ken burns zoom  1s 
+ Typewriter text  character reveal, cursor blink  per char 50ms 
+ Confetti  gravity, spread, fade  3s 
+ Page transitions  gentle fadeslide between narrative sections  0.5s 
+
+All animations respect `prefers-reduced-motion`.
+
+### 6.6 Accessibility & Inclusivity
+- All interactive elements have ARIA labels.
+- Color contrast ratios meet WCAG AA.
+- Keyboard navigable (tab, enter for balloons, space for candle simulation).
+- Alternative text for photos.
+- Option to disable motionanimations.
+- Screen reader can convey the narrative sequence.
+
+### 6.7 Mobile Responsiveness (40-Page Equivalent Adaptivity)
+We treat the site as a “love story book” with distinct viewsstates that, on mobile, feel like 40 pages of an unfolding tale. Implementation
+- CSS container queries + breakpoints.
+- Each major section behaves like a card or full‑screen page with smooth scroll‑snap.
+- On mobile, vertical scroll triggers “page turn” effect (subtle animation).
+- Interactive elements simplified but equally joyful.
+- Performance lazy load off‑screen content, preload critical assets.
+
+### 6.8 Visual Hierarchy & Spacing
+- Generous white space to let emotions breathe.
+- Key elements centered; gift box, candles, and message card have top priority.
+- Spacing scale 4px base, up to 64px for section separators.
+- Consistent padding on mobile 16px, desktop 48px.
+
+---
+
+## 7. Technical Architecture
+
+### 7.1 Frontend Stack
+- Core HTML5, CSS3, JavaScript (ES6+)  
+  Advanced variant React.js + Vite for component‑based architecture.
+- Styling Tailwind CSS with custom love‑theme configuration (or styled‑components for React).
+- Deployment Netlify  Vercel with continuous deployment from GitHub.
+
+### 7.2 Animation Libraries
+- `GSAP` (GreenSock) for timeline‑based, high‑performance animations (balloons, gift box).
+- `canvas-confetti` for confetti.
+- `lottie-web` for candle flames, gift unwrap Lottie files.
+- CSS keyframes for floating hearts, pulse.
+
+### 7.3 Media Handling & Optimization
+- Images Next‑gen formats (WebP), responsive srcset, lazy loading.
+- Video hosted on YouTubeVimeo for bandwidth; custom poster image.
+- Audio mp3 preloaded with user gesture start (autoplay policy). Volume 0.3.
+- Sound effects base64 encoded short audio files, triggered on interaction.
+
+### 7.4 State Management
+- Vanilla JS simple state object tracking interaction completion (balloons popped, candles blown, gift opened).  
+- React Context API or Zustand for sequence flags.
+- Countdown timer uses `setInterval` synced to device time.
+
+### 7.5 Browser Compatibility
+- Modern evergreen browsers (Chrome, Firefox, Safari, Edge).
+- Fallbacks microphone blow requires HTTPS; if not supported, show button.
+- Touch events with passive listeners.
+
+### 7.6 Performance Budget
+- Total page weight  5MB (including images, excluding video streamed externally).
+- First Contentful Paint  1.5s, Time to Interactive  3s.
+- Optimize with code splitting, font subsetting, and critical CSS inline.
+
+---
+
+## 8. Content & Asset Requirements
+
+### 8.1 Photography
+- 5–10 high‑quality photos, portrait and landscape.
+- Organized in chronological order first meeting, funny moments, trips, special occasions.
+- Optimized to WebP, resolutions thumbnail (200px), mobile (600px), desktop (1200px).
+- Candid, emotional shots preferred.
+
+### 8.2 Music & Sound Design
+- Background song “Your Song” or meaningful track, mp3 format.
+- Sound FX Balloon pop (soft), ribbon slide, candle blow whoosh, typewriter clicks, gift box reveal chime, confetti burst.
+- All sounds optional; user can mute globally via a single toggle.
+
+### 8.3 Personal Message Copy
+- A heartfelt letter provided by creator. Markdown or plain text.
+- Must include greeting, shared memories, what makes them special, wishes for the future, sign‑off.
+- Approx 200–400 words for typewriter reveal.
+
+### 8.4 Video Production
+- Optional 30–90 second video montage. Formats 169, mp4H.264.
+- Embed link or file. Custom thumbnail with a play button overlay.
+
+---
+
+## 9. Feature Breakdown & Interaction Flow
+
+### 9.1 Hero – Start Button
+- States Loading → Idle (button pulse) → Pressed (scale down, glow) → Transition to next section.
+- Error handling If image fails, show gradient background with text.
+
+### 9.2 Pop Balloons Mini-Game
+- Rendering Each balloon is a div with CSS for shape and string. Colors random from palette.
+- Interaction `click``touchstart` on balloon triggers pop animation. Balloon removed from DOM.
+- Counter hidden tracker; when count == 0, fire event.
+- Mobile prevent default to avoid zoom, `touch-action manipulation`.
+- Accessibility Balloons are buttons with label “Pop balloon”.
+
+### 9.3 Blow Out Candles
+- Audio API `navigator.mediaDevices.getUserMedia({ audio true })` → AnalyserNode to detect RMS. Threshold triggers blow.
+- Fallback Long‑press (setTimeout 800ms) on a “Blow” button; visual blow effect.
+- Candle object flame div with flicker animation; extinguishing flame scales to 0, smoke puff.
+- Completion all candles out → trigger celebration.
+
+### 9.4 Open Gift Box
+- Structure Lid (top div) and base. Ribbonbow on top.
+- Drag Use `mousedown``touchstart` to track verticalhorizontal movement; lid rotates.
+- Simpler tap tap the lid to make it bounce up and open.
+- Reveal content dynamically inserted imagemessage with scale & fade.
+
+### 9.5 Photo Gallery & Slideshow
+- Swiper.js or custom carousel with touch events.
+- Features autoplay, pause on interaction, navigation dots with heart icons, swipe gesture.
+- Lightbox full‑screen overlay, pinch‑zoom via `transform scale()`, close on tap outside.
+
+### 9.6 Typewriter Love Letter
+- Implementation JavaScript interval adding characters to a `p`. Handle line breaks. Cursor CSS animation.
+- User control click to speed up or reveal instantly.
+- Emotion After complete, the cursor disappears and a heart slowly fills.
+
+### 9.7 Grand Finale Surprise
+- Condition Must have completed previous interactions (or can skip via hidden “skip” for testing).
+- Video version Lazy‑load iframe; click overlay to play.
+- Gift box version Another interactive gift, final message “Happy Birthday, [Name]. I love you endlessly.”
+- Confetti full screen, 5 seconds.
+
+### 9.8 Hidden Easter Eggs
+- Konami code (↑↑↓↓←→←→BA) triggers a silly animation.
+- Triple‑tap on the title reveals a hidden message from the creator.
+- Long‑press on a photo shows a secret caption.
+
+---
+
+## 10. Development Approach & Roadmap
+
+### 10.1 Phases & Milestones
+- Phase 0 Asset gathering & content finalization (1 day)
+- Phase 1 Static layout & responsive structure (2 days)
+- Phase 2 Hero, Memories, Message sections (3 days)
+- Phase 3 Interactive mini‑games (Balloons, Candles, Gift) (4 days)
+- Phase 4 Grand Finale, Music, Confetti, Easter Eggs (2 days)
+- Phase 5 Testing & Polish (2 days)
+- Phase 6 Deployment & Surprise delivery (1 day)
+
+### 10.2 Sprint Plan (Advanced Coding - React)
+- Sprint 1 Project setup, routing (or scroll sections), global theme, fonts, hero.
+- Sprint 2 Photo gallery, personal message with typewriter.
+- Sprint 3 Balloons game, candle blow, gift box – component isolation.
+- Sprint 4 Integration of state (completion flags), audio, confetti triggers, final section.
+- Sprint 5 Responsive adjustments, accessibility, performance optimization.
+- Sprint 6 User testing, bug fixes, deployment.
+
+### 10.3 No‑Code  Low‑Code Adaptations
+- Canva Use animated templates for slides; limitations in interactive games but can simulate story flow with clickable links between pages.
+- Carrd.co Single‑page with scroll‑based reveal; embed LottieHTML widgets for simple interactions (pop balloon could be a button that hides image). Candle blow fallback button.
+
+---
+
+## 11. Testing Strategy
+
+### 11.1 Device & Browser Matrix
+- Phones iPhone SE, 1213, Samsung Galaxy S21 (Chrome, Safari).
+- Tablets iPad, Android tablet.
+- Desktops Windows Chrome, Firefox, Edge; Mac Safari.
+- Test Touch, mouse, keyboard, microphone permission flows.
+
+### 11.2 User Testing Scenarios
+1. First‑time recipient observe emotional journey without guidance.
+2. Replay ensure state resets or offers replay button.
+3. Low bandwidth test imagevideo loading, graceful fallbacks.
+4. Accessibility screen reader navigation, reduced motion.
+
+### 11.3 Performance & Load Testing
+- Lighthouse audit  90 performance, accessibility, best practices.
+- Check memory usage for long sessions.
+- Verify confetti doesn’t crash mobile.
+
+---
+
+## 12. Deployment & Hosting
+
+- Platform Netlify (free tier with custom domain option).
+- CICD Connect GitHub repository; auto deploy on main branch.
+- Environment Build command (if React), output directory `dist` or `build`.
+- Custom domain love.yourname.com (optional).
+- SSL enforced.
+
+---
+
+## 13. Maintenance & Post-Launch
+
+- Monitor analytics (if added, privacy compliant).
+- Provide creator with a guide to update content (photos, message) via simple JSON config file.
+- Ensure video link remains valid.
+- Option to turn site into a keepsake by offering a downloadable offline version (PWA).
+
+---
+
+## 14. Appendices
+
+### 14.1 Wireframe Sketches (Descriptive)
+- Hero Full‑screen blurred image, centered “Happy Birthday ❤️” in cursive, below a pulsing button. Scroll arrow bottom center.
+- Balloons 6 balloons scattered in viewport, each anchored at bottom. String lines. Pop counter hidden.
+- Cake & Candles Cake illustration center, candles with animated flames. “Blow me a kiss” instruction.
+- Gift Box Large 3D box center, ribbon with tag “Pull me”.
+- Gallery Horizontal strip of photos with caption overlay.
+- Letter Parchment-style card with typewriter text.
+- Finale Full screen “I Love You” with confetti.
+
+### 14.2 Asset Checklist
+- [ ] 5–10 optimized photos (WebP).
+- [ ] Background music mp3.
+- [ ] Sound effect files (pop, blow, ribbon, chime, typewriter).
+- [ ] Personal message text.
+- [ ] Video link (if applicable).
+- [ ] Lottie animation files (heart loader, candle flame, gift unwrap).
+- [ ] Custom illustrations (balloon, gift, cake) – can use free assets.
+
+### 14.3 Glossary
+- GSAP GreenSock Animation Platform.
+- Lottie JSON‑based animation file rendered natively.
+- Konami Code Easter egg cheat code.
+- PRD Product Requirements Document.
+
+---
+
+Document Status Final  
+Approved by [Your Name]  
+Next Step Kick-off asset gathering & development.
+
+🎂 With this PRD, every line of code will be filled with love and intention. The result isn’t just a website – it’s a timeless gift.
