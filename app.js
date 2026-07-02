@@ -502,6 +502,7 @@
   let candleGameReady = false;
   let micStream = null;
   let micCheckInterval = null;
+  let micAudioCtx = null;
 
   function initCandleGame() {
     if (candleGameReady) return;
@@ -510,35 +511,56 @@
     const blowBtn   = document.getElementById("candle-blow-btn");
     const micIndicator = document.getElementById("mic-status-indicator");
 
+    // Allow mic on HTTPS, localhost, 127.0.0.1, and file:// (local dev)
     const isSecure = location.protocol === "https:"
+      || location.protocol === "file:"
       || location.hostname === "localhost"
       || location.hostname === "127.0.0.1";
 
-    // Track whether mic setup has been attempted
-    let micInitialised = false;
+    // Track whether mic is currently active (not just attempted)
+    let micActive = false;
+    // Track consecutive frames above threshold for sustained-blow detection
+    let blowFrames = 0;
+    const BLOW_FRAMES_NEEDED = 3;   // ~300ms sustained blow at 100ms intervals
+    const BLOW_RMS_THRESHOLD = 0.08; // RMS amplitude threshold (0–1 range)
 
-    // ── Start mic AFTER a user gesture so AudioContext resumes on mobile ──
+    // ── Start mic — can be retried if previous attempt failed ──
     function tryStartMic() {
-      if (micInitialised || !isSecure) return;
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-      micInitialised = true;
+      if (micActive || candlesBlown) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        micIndicator.textContent = "Tap the button to blow out the candles!";
+        return;
+      }
 
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      micIndicator.textContent = "Requesting microphone…";
+
+      navigator.mediaDevices.getUserMedia({
+        audio: {
+          // Disable all processing for raw amplitude detection
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        }
+      }).then(stream => {
         micStream = stream;
+        micActive = true;
 
-        // Create AudioContext only after a gesture — guaranteed resumed on mobile
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Create AudioContext after user gesture — guaranteed resumed on mobile
+        micAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Some browsers need an explicit resume even after a gesture
         const startListening = () => {
-          const source   = audioCtx.createMediaStreamSource(stream);
-          const analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 256;
+          const source   = micAudioCtx.createMediaStreamSource(stream);
+          const analyser = micAudioCtx.createAnalyser();
+          analyser.fftSize = 2048;       // larger FFT → smoother time-domain data
+          analyser.smoothingTimeConstant = 0.3;
           source.connect(analyser);
           micIndicator.textContent = "🎤 Blow into your microphone!";
+          micIndicator.classList.add("mic-listening");
 
-          const bufLen = analyser.frequencyBinCount;
-          const data   = new Uint8Array(bufLen);
+          const bufLen = analyser.fftSize;
+          const timeDomainData = new Float32Array(bufLen);
+
+          blowFrames = 0;
 
           micCheckInterval = setInterval(() => {
             if (currentSectionId !== "cake" || candlesBlown) {
@@ -546,19 +568,45 @@
               stopMicrophone();
               return;
             }
-            analyser.getByteFrequencyData(data);
-            let sum = 0;
-            for (let i = 0; i < bufLen; i++) sum += data[i];
-            if (sum / bufLen > 55) extinguishCandles();
+
+            // Use time-domain waveform data for RMS amplitude detection.
+            // This is far more reliable for breath/blow detection than
+            // frequency data because blowing produces broadband noise
+            // across the entire spectrum, not concentrated energy in
+            // specific frequency bins.
+            analyser.getFloatTimeDomainData(timeDomainData);
+
+            // Calculate RMS (root mean square) amplitude
+            let sumSquares = 0;
+            for (let i = 0; i < bufLen; i++) {
+              sumSquares += timeDomainData[i] * timeDomainData[i];
+            }
+            const rms = Math.sqrt(sumSquares / bufLen);
+
+            if (rms > BLOW_RMS_THRESHOLD) {
+              blowFrames++;
+              // Visual feedback: show blow intensity
+              micIndicator.textContent = "🌬️ Keep blowing…!";
+              if (blowFrames >= BLOW_FRAMES_NEEDED) {
+                extinguishCandles();
+              }
+            } else {
+              blowFrames = Math.max(0, blowFrames - 1); // gradual decay
+              if (!candlesBlown) {
+                micIndicator.textContent = "🎤 Blow into your microphone!";
+              }
+            }
           }, 100);
         };
 
-        if (audioCtx.state === "suspended") {
-          audioCtx.resume().then(startListening).catch(startListening);
+        if (micAudioCtx.state === "suspended") {
+          micAudioCtx.resume().then(startListening).catch(startListening);
         } else {
           startListening();
         }
-      }).catch(() => {
+      }).catch(err => {
+        micActive = false; // allow retry on next tap
+        console.warn("Mic access denied or failed:", err.name);
         micIndicator.textContent = "Tap the button to blow out the candles!";
       });
     }
@@ -566,7 +614,9 @@
     // ── Blow button — works on both click (desktop) and touchend (mobile) ──
     function onBlowBtn(e) {
       e.preventDefault();      // prevent ghost click on mobile
-      tryStartMic();           // first tap wakes the mic
+      if (!micActive) {
+        tryStartMic();         // first tap wakes the mic (or retries)
+      }
       extinguishCandles();     // also works as manual fallback
     }
 
@@ -583,9 +633,17 @@
   }
 
   function stopMicrophone() {
+    if (micCheckInterval) {
+      clearInterval(micCheckInterval);
+      micCheckInterval = null;
+    }
     if (micStream) {
       micStream.getTracks().forEach(t => t.stop());
       micStream = null;
+    }
+    if (micAudioCtx && micAudioCtx.state !== "closed") {
+      micAudioCtx.close().catch(() => {});
+      micAudioCtx = null;
     }
   }
 
@@ -594,6 +652,13 @@
     candlesBlown = true;
     synth.playBlow();
     stopMicrophone();
+
+    // Update mic indicator to reflect success
+    const micInd = document.getElementById("mic-status-indicator");
+    if (micInd) {
+      micInd.classList.remove("mic-listening");
+      micInd.textContent = "✨ Candles extinguished!";
+    }
 
     const flames = document.querySelectorAll(".flame");
     flames.forEach((flame, i) => {
