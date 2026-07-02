@@ -398,8 +398,9 @@
       balloon.style.color           = bgColor;
 
       // Which column and row this balloon occupies in the 4×2 grid.
-      const col = index % COLS;
-      const row = Math.floor(index / COLS);
+      // Ordered in a zigzag sequence: Top-Left, Bottom-Left, Top-2nd, Bottom-2nd
+      const col = Math.floor(index / 2);
+      const row = index % 2;
 
       // ── Pixel-precise positioning ─────────────────────────────────────
       // left = left edge of the balloon in pixels (never negative, never
@@ -417,7 +418,7 @@
       // position) which appears as a one-frame stutter/jump.
       // Setting it before insertion means the first painted frame already
       // respects the delay — the animation starts clean.
-      balloon.style.animationDelay = (col * 0.28 + row * 0.14) + "s";
+      balloon.style.animationDelay = -(col * 0.28 + row * 0.14) + "s";
 
       // String
       const string = document.createElement("div");

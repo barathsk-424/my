@@ -378,8 +378,11 @@ body {
   background: rgba(180, 140, 255, 0.35);
 }
 @keyframes swayBalloon {
-  0%   { transform: rotate(-3deg) translateX(-8px); }
-  100% { transform: rotate(3deg) translateX(8px); }
+  0%   { transform: translateX(-10px) translateY(0); }
+  25%  { transform: translateX(10px) translateY(-10px); }
+  50%  { transform: translateX(-10px) translateY(-20px); }
+  75%  { transform: translateX(10px) translateY(-10px); }
+  100% { transform: translateX(-10px) translateY(0); }
 }
 .balloon-pop-text {
   /* position:fixed is set by JS — this element is always a direct child
@@ -396,6 +399,7 @@ body {
   z-index: 9999;
   white-space: normal;
   word-break: break-word;
+  width: max-content;
   max-width: min(220px, 80vw);
   text-align: center;
   /* translateX(-50%) centres the pill on its fixed `left` position.
