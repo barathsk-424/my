@@ -37,8 +37,8 @@
     // ── Burst particles (hearts + confetti) ──
     function spawnParticles() {
       const container = document.getElementById("gib-particles");
-      const hearts = ["💜","💖","✨","💎","🌸","⭐","💫"];
-      const confettiColors = ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#5B21B6","#C084FC","#D1B8F7"];
+      const hearts = ["💜", "💖", "✨", "💎", "🌸", "⭐", "💫"];
+      const confettiColors = ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF", "#5B21B6", "#C084FC", "#D1B8F7"];
 
       // 20 heart emojis
       for (let i = 0; i < 20; i++) {
@@ -46,7 +46,7 @@
         p.className = "gib-particle";
         p.textContent = hearts[Math.floor(Math.random() * hearts.length)];
         const angle = (Math.random() * 360) * (Math.PI / 180);
-        const dist  = 90 + Math.random() * 140;
+        const dist = 90 + Math.random() * 140;
         p.style.cssText = [
           `--tx:${Math.cos(angle) * dist}px`,
           `--ty:${Math.sin(angle) * dist}px`,
@@ -62,7 +62,7 @@
         p.className = "gib-confetti-dot";
         p.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
         const angle = (Math.random() * 360) * (Math.PI / 180);
-        const dist  = 100 + Math.random() * 160;
+        const dist = 100 + Math.random() * 160;
         p.style.cssText += [
           `--tx:${Math.cos(angle) * dist}px`,
           `--ty:${Math.sin(angle) * dist}px`,
@@ -78,8 +78,8 @@
     function fireConfettiBurst() {
       if (typeof confetti !== "function") return;
       const origin = { x: 0.5, y: 0.5 };
-      confetti({ particleCount: 80, spread: 110, startVelocity: 35, origin, colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#fff"] });
-      setTimeout(() => confetti({ particleCount: 40, spread: 60, startVelocity: 20, origin, colors: ["#5B21B6","#C084FC","#D1B8F7","#C8A84B"] }), 200);
+      confetti({ particleCount: 80, spread: 110, startVelocity: 35, origin, colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF", "#fff"] });
+      setTimeout(() => confetti({ particleCount: 40, spread: 60, startVelocity: 20, origin, colors: ["#5B21B6", "#C084FC", "#D1B8F7", "#C8A84B"] }), 200);
     }
 
     // ── One-shot click/tap handler ──
@@ -145,11 +145,11 @@
   // All synth methods are intentionally silent — only background music plays.
   class SoundSynth {
     constructor() { this.ctx = null; }
-    init()      {}
-    playPop()   {}
-    playBlow()  {}
-    playChime() {}
-    playClick() {}
+    init() { }
+    playPop() { }
+    playBlow() { }
+    playChime() { }
+    playClick() { }
   }
 
   const synth = new SoundSynth();
@@ -193,7 +193,7 @@
         isPlayingMusic = true;
         musicToggle.classList.add("playing");
         musicToggle.classList.remove("muted");
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }
 
@@ -206,7 +206,7 @@
         musicToggle.classList.add("playing");
         musicToggle.classList.remove("muted");
         removeAutoplayFallback();
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       removeAutoplayFallback();
     }
@@ -234,11 +234,11 @@
   const bgHeartsContainer = document.getElementById("bg-hearts-container");
   // Violet hearts appear 3× more than other symbols for a subtle romantic density
   const heartSymbols = [
-    "💜","💜","💜",   // deep violet — most frequent
-    "🪻","🪻",        // light violet blossom
-    "💟","💟",        // violet heart decoration
-    "💖","💕","💝",   // accent pinks — occasional warmth
-    "✨","⭐","💫",   // sparkle / star
+    "💜", "💜", "💜",   // deep violet — most frequent
+    "🪻", "🪻",        // light violet blossom
+    "💟", "💟",        // violet heart decoration
+    "💖", "💕", "💝",   // accent pinks — occasional warmth
+    "✨", "⭐", "💫",   // sparkle / star
     "🌸"              // soft floral
   ];
 
@@ -250,7 +250,7 @@
     el.textContent = symbol;
     el.style.left = Math.random() * 100 + "vw";
     // Hearts render slightly smaller for subtlety; stars/sparkles keep the full range
-    const isHeart = ["💜","🪻","💟","💖","💕","💝","🌸"].includes(symbol);
+    const isHeart = ["💜", "🪻", "💟", "💖", "💕", "💝", "🌸"].includes(symbol);
     el.style.fontSize = isHeart
       ? (Math.random() * 0.7 + 0.65) + "rem"   // 0.65–1.35 rem — small & elegant
       : (Math.random() * 0.9 + 0.85) + "rem";   // 0.85–1.75 rem — sparkles slightly larger
@@ -298,10 +298,10 @@
           requestAnimationFrame(() => { initBalloonsGame(); });
         });
         break;
-      case "cake":     initCandleGame(); break;
+      case "cake": initCandleGame(); break;
       case "memories": initMemoriesSlideshow(); break;
-      case "letter":   startTypewriterLetter(); break;
-      case "finale":   initFinaleSection(); break;
+      case "letter": startTypewriterLetter(); break;
+      case "finale": initFinaleSection(); break;
     }
   }
 
@@ -348,40 +348,40 @@
     document.getElementById("total-balloons-count").textContent = totalBalloons;
     countEl.textContent = "0";
 
-    const colors = ["#C9B0F5","#A67FE8","#7C3AED","#9B6AF0","#D1B8F7","#B89AEC","#E4D4FF","#8B5CF6"];
+    const colors = ["#C9B0F5", "#A67FE8", "#7C3AED", "#9B6AF0", "#D1B8F7", "#B89AEC", "#E4D4FF", "#8B5CF6"];
 
     // ── Layout constants ──────────────────────────────────────────────────
     // Canvas fills the section viewport via position:absolute inset:0.
-    const canvasW  = canvas.offsetWidth  || window.innerWidth;
-    const canvasH  = canvas.offsetHeight || window.innerHeight;
+    const canvasW = canvas.offsetWidth || window.innerWidth;
+    const canvasH = canvas.offsetHeight || window.innerHeight;
     const isMobile = canvasW < 600;
 
     // Match exactly what CSS clamp() produces for the balloon dimensions.
     const bW = Math.round(Math.min(Math.max(isMobile ? 40 : 44,
-                                            canvasW * (isMobile ? 0.09 : 0.10)),
-                                   isMobile ? 56 : 80));
+      canvasW * (isMobile ? 0.09 : 0.10)),
+      isMobile ? 56 : 80));
     const bH = Math.round(Math.min(Math.max(isMobile ? 48 : 52,
-                                            canvasW * (isMobile ? 0.11 : 0.12)),
-                                   isMobile ? 68 : 96));
+      canvasW * (isMobile ? 0.11 : 0.12)),
+      isMobile ? 68 : 96));
 
     // 8 balloons in 2 rows of 4.
     // Row 0 = even indices (0,2,4,6), Row 1 = odd indices (1,3,5,7).
-    const COLS      = 4;
-    const ROWS      = 2;
+    const COLS = 4;
+    const ROWS = 2;
 
     // Horizontal: pad each side by exactly one balloon-width so no balloon
     // can ever touch the screen edge.  Then divide the remaining usable
     // width into (COLS-1) equal gaps.
-    const hPad      = bW;                              // one balloon-width of padding
-    const usableW   = canvasW - 2 * hPad - bW;        // space between first and last left-edge
-    const colGap    = COLS > 1 ? usableW / (COLS - 1) : 0;
+    const hPad = bW;                              // one balloon-width of padding
+    const usableW = canvasW - 2 * hPad - bW;        // space between first and last left-edge
+    const colGap = COLS > 1 ? usableW / (COLS - 1) : 0;
 
     // Reserve the top 70px on mobile to clear the music-toggle button.
-    const topClear  = isMobile ? 70 : 30;
+    const topClear = isMobile ? 70 : 30;
     // Vertical gap between the two rows — generous enough to look like a
     // proper zig-zag but still well above the info card at the bottom.
-    const rowGap    = isMobile ? Math.round(canvasH * 0.14)
-                               : Math.round(canvasH * 0.12);
+    const rowGap = isMobile ? Math.round(canvasH * 0.14)
+      : Math.round(canvasH * 0.12);
 
     // Row 0 top-edge, Row 1 top-edge (pixels from canvas top).
     const rowTop = [topClear, topClear + rowGap];
@@ -395,7 +395,7 @@
 
       const bgColor = colors[index % colors.length];
       balloon.style.backgroundColor = bgColor;
-      balloon.style.color           = bgColor;
+      balloon.style.color = bgColor;
 
       // Which column and row this balloon occupies in the 4×2 grid.
       // Ordered in a zigzag sequence: Top-Left, Bottom-Left, Top-2nd, Bottom-2nd
@@ -406,10 +406,10 @@
       // left = left edge of the balloon in pixels (never negative, never
       // exceeds canvasW - bW, so the right edge never leaves the canvas).
       const leftPx = hPad + col * colGap;
-      const topPx  = rowTop[row] || rowTop[ROWS - 1];
+      const topPx = rowTop[row] || rowTop[ROWS - 1];
 
       balloon.style.left = leftPx + "px";
-      balloon.style.top  = topPx  + "px";
+      balloon.style.top = topPx + "px";
       // ─────────────────────────────────────────────────────────────────
 
       // Stutter fix: set animationDelay BEFORE appending to the DOM.
@@ -440,7 +440,7 @@
             spread: 55,
             origin: {
               x: (rect.left + rect.width / 2) / window.innerWidth,
-              y: (rect.top  + rect.height / 2) / window.innerHeight
+              y: (rect.top + rect.height / 2) / window.innerHeight
             },
             colors: [bgColor, "#C8A84B", "#7C3AED"]
           });
@@ -453,24 +453,24 @@
         // that traps absolutely-positioned descendants. Using fixed + body
         // bypasses both constraints entirely.
         const popText = document.createElement("div");
-        popText.className   = "balloon-pop-text";
+        popText.className = "balloon-pop-text";
         popText.textContent = word;
 
         // Viewport-centre of the balloon. Clamped so the pill label
         // (≤220px wide, centred via translateX(-50%)) never overflows
         // either side of the screen regardless of which balloon was popped.
-        const vCentreX = rect.left + rect.width  / 2;
-        const vCentreY = rect.top  + rect.height / 2;
+        const vCentreX = rect.left + rect.width / 2;
+        const vCentreY = rect.top + rect.height / 2;
         const halfPill = Math.min(110, window.innerWidth * 0.40);
-        const safeX    = Math.min(
+        const safeX = Math.min(
           Math.max(vCentreX, halfPill + 8),
           window.innerWidth - halfPill - 8
         );
 
         popText.style.position = "fixed";
-        popText.style.left     = safeX + "px";
-        popText.style.top      = vCentreY + "px";
-        popText.style.zIndex   = "9999";   // above every stacking context
+        popText.style.left = safeX + "px";
+        popText.style.top = vCentreY + "px";
+        popText.style.zIndex = "9999";   // above every stacking context
         document.body.appendChild(popText);
         setTimeout(() => popText.remove(), 2000);
 
@@ -489,7 +489,7 @@
         }
       }
 
-      balloon.addEventListener("click",      handlePop);
+      balloon.addEventListener("click", handlePop);
       balloon.addEventListener("touchstart", handlePop, { passive: false });
 
       // Append AFTER all styles are set so the first painted frame is correct.
@@ -508,7 +508,7 @@
     if (candleGameReady) return;
     candleGameReady = true;
 
-    const blowBtn   = document.getElementById("candle-blow-btn");
+    const blowBtn = document.getElementById("candle-blow-btn");
     const micIndicator = document.getElementById("mic-status-indicator");
 
     // Allow mic on HTTPS, localhost, 127.0.0.1, and file:// (local dev)
@@ -522,7 +522,7 @@
     // Track consecutive frames above threshold for sustained-blow detection
     let blowFrames = 0;
     const BLOW_FRAMES_NEEDED = 3;   // ~300ms sustained blow at 100ms intervals
-    const BLOW_RMS_THRESHOLD = 0.08; // RMS amplitude threshold (0–1 range)
+    const BLOW_RMS_THRESHOLD = 0.03; // RMS amplitude threshold (0–1 range)
 
     // ── Start mic — can be retried if previous attempt failed ──
     function tryStartMic() {
@@ -549,7 +549,7 @@
         micAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         const startListening = () => {
-          const source   = micAudioCtx.createMediaStreamSource(stream);
+          const source = micAudioCtx.createMediaStreamSource(stream);
           const analyser = micAudioCtx.createAnalyser();
           analyser.fftSize = 2048;       // larger FFT → smoother time-domain data
           analyser.smoothingTimeConstant = 0.3;
@@ -570,10 +570,6 @@
             }
 
             // Use time-domain waveform data for RMS amplitude detection.
-            // This is far more reliable for breath/blow detection than
-            // frequency data because blowing produces broadband noise
-            // across the entire spectrum, not concentrated energy in
-            // specific frequency bins.
             analyser.getFloatTimeDomainData(timeDomainData);
 
             // Calculate RMS (root mean square) amplitude
@@ -582,7 +578,7 @@
               sumSquares += timeDomainData[i] * timeDomainData[i];
             }
             const rms = Math.sqrt(sumSquares / bufLen);
-
+            console.log("RMS:", rms);
             if (rms > BLOW_RMS_THRESHOLD) {
               blowFrames++;
               // Visual feedback: show blow intensity
@@ -606,7 +602,7 @@
         }
       }).catch(err => {
         micActive = false; // allow retry on next tap
-        console.warn("Mic access denied or failed:", err.name);
+        console.warn("Mic access denied or failed:", err);
         micIndicator.textContent = "Tap the button to blow out the candles!";
       });
     }
@@ -629,7 +625,7 @@
       }
     }
 
-    blowBtn.addEventListener("click",    onBlowBtn);
+    blowBtn.addEventListener("click", onBlowBtn);
     blowBtn.addEventListener("touchend", onBlowBtn, { passive: false });
 
     // On desktop, try starting the mic immediately (no gesture restriction)
@@ -644,462 +640,470 @@
     }
   }
 
-  function stopMicrophone() {
-    if (micCheckInterval) {
-      clearInterval(micCheckInterval);
-      micCheckInterval = null;
-    }
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-    }
-    if (micAudioCtx && micAudioCtx.state !== "closed") {
-      micAudioCtx.close().catch(() => {});
-      micAudioCtx = null;
-    }
+function stopMicrophone() {
+  if (micCheckInterval) {
+    clearInterval(micCheckInterval);
+    micCheckInterval = null;
+  }
+  if (micStream) {
+    micStream.getTracks().forEach(t => t.stop());
+    micStream = null;
+  }
+  if (micAudioCtx && micAudioCtx.state !== "closed") {
+    micAudioCtx.close().catch(() => { });
+    micAudioCtx = null;
+  }
+}
+
+function extinguishCandles() {
+  if (candlesBlown) return;
+  candlesBlown = true;
+  synth.playBlow();
+  stopMicrophone();
+
+  // Update mic indicator to reflect success
+  const micInd = document.getElementById("mic-status-indicator");
+  if (micInd) {
+    micInd.classList.remove("mic-listening");
+    micInd.textContent = "✨ Candles extinguished!";
   }
 
-  function extinguishCandles() {
-    if (candlesBlown) return;
-    candlesBlown = true;
-    synth.playBlow();
-    stopMicrophone();
+  const flames = document.querySelectorAll(".flame");
+  flames.forEach((flame, i) => {
+    setTimeout(() => flame.classList.add("blown"), i * 200);
+  });
 
-    // Update mic indicator to reflect success
-    const micInd = document.getElementById("mic-status-indicator");
-    if (micInd) {
-      micInd.classList.remove("mic-listening");
-      micInd.textContent = "✨ Candles extinguished!";
-    }
-
-    const flames = document.querySelectorAll(".flame");
-    flames.forEach((flame, i) => {
-      setTimeout(() => flame.classList.add("blown"), i * 200);
-    });
-
-    setTimeout(() => {
-      synth.playChime();
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.55 },
-          colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF"] });
-      }
-      const msg = document.getElementById("cake-message");
-      msg.textContent = "Make a wish! 🌟";
-      msg.style.color = "var(--color-accent-gold)";
-      msg.style.fontSize = "1.4rem";
-
-      setTimeout(() => navigateTo("gift"), 2800);
-    }, flames.length * 200 + 400);
-  }
-
-  // ─── 8. Gift Box Mini-Game ───
-  let giftOpened = false;
-  const giftBox = document.getElementById("clickable-gift-box");
-
-  giftBox.addEventListener("click", () => {
-    if (giftOpened) return;
-    giftOpened = true;
+  setTimeout(() => {
     synth.playChime();
-    giftBox.classList.add("opened");
-
     if (typeof confetti === "function") {
-      confetti({ particleCount: 60, spread: 70,
-        colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF"] });
+      confetti({
+        particleCount: 100, spread: 70, origin: { y: 0.55 },
+        colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF"]
+      });
     }
+    const msg = document.getElementById("cake-message");
+    msg.textContent = "Make a wish! 🌟";
+    msg.style.color = "var(--color-accent-gold)";
+    msg.style.fontSize = "1.4rem";
 
-    document.getElementById("gift-instruction").textContent = "Look inside! ✨";
+    setTimeout(() => navigateTo("gift"), 2800);
+  }, flames.length * 200 + 400);
+}
 
-    setTimeout(() => {
-      const card = document.querySelector("#gift-section .premium-card");
-      // Only add button if it doesn't already exist
-      if (!card.querySelector(".btn-next-gift")) {
-        const btn = document.createElement("button");
-        btn.className = "btn-primary btn-next-gift";
-        btn.textContent = "See Our Memories 📸";
-        btn.style.marginTop = "20px";
-        btn.style.animation = "pulseBeat 1.8s infinite alternate";
-        btn.addEventListener("click", () => navigateTo("memories"));
-        card.appendChild(btn);
-      }
-    }, 1000);
-  });
+// ─── 8. Gift Box Mini-Game ───
+let giftOpened = false;
+const giftBox = document.getElementById("clickable-gift-box");
 
-  // ─── 9. Memories Photo Slideshow ───
-  let currentSlide = 0;
-  let slideshowTimer = null;
-  let memoriesReady = false;
-  const slidesWrapper = document.getElementById("slides-wrapper");
-  const heartDotsBox = document.getElementById("heart-dots-container");
+giftBox.addEventListener("click", () => {
+  if (giftOpened) return;
+  giftOpened = true;
+  synth.playChime();
+  giftBox.classList.add("opened");
 
-  function initMemoriesSlideshow() {
-    if (memoriesReady) return;
-    memoriesReady = true;
-
-    slidesWrapper.innerHTML = "";
-    heartDotsBox.innerHTML = "";
-    currentSlide = 0;
-
-    CONFIG.memories.forEach((item, idx) => {
-      const slide = document.createElement("div");
-      slide.className = "slide" + (idx === 0 ? " active" : "");
-
-      const img = document.createElement("img");
-      img.src = item.url;
-      img.alt = "Memory " + (idx + 1);
-      img.className = "slide-img";
-      img.addEventListener("click", () => openLightbox(item.url, item.caption));
-
-      const cap = document.createElement("div");
-      cap.className = "slide-caption-bar";
-      cap.textContent = item.caption;
-
-      slide.appendChild(img);
-      slide.appendChild(cap);
-      slidesWrapper.appendChild(slide);
-
-      const dot = document.createElement("span");
-      dot.className = "heart-dot" + (idx === 0 ? " active" : "");
-      dot.textContent = "♥";
-      dot.addEventListener("click", () => { synth.playClick(); goToSlide(idx); });
-      heartDotsBox.appendChild(dot);
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 60, spread: 70,
+      colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF"]
     });
-
-    // Navigation arrows
-    document.getElementById("prev-slide-btn").onclick = () => { synth.playClick(); goToSlide(currentSlide - 1); };
-    document.getElementById("next-slide-btn").onclick = () => { synth.playClick(); goToSlide(currentSlide + 1); };
-
-    // Swipe gesture
-    let touchX = 0;
-    slidesWrapper.addEventListener("touchstart", e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
-    slidesWrapper.addEventListener("touchend", e => {
-      const dx = e.changedTouches[0].screenX - touchX;
-      if (dx < -40) goToSlide(currentSlide + 1);
-      else if (dx > 40) goToSlide(currentSlide - 1);
-    });
-
-    startSlideshowAuto();
   }
 
-  function startSlideshowAuto() {
-    clearInterval(slideshowTimer);
-    slideshowTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
-  }
+  document.getElementById("gift-instruction").textContent = "Look inside! ✨";
 
-  function goToSlide(idx) {
-    const slides = slidesWrapper.querySelectorAll(".slide");
-    const dots = heartDotsBox.querySelectorAll(".heart-dot");
-    if (!slides.length) return;
-    slides[currentSlide].classList.remove("active");
-    dots[currentSlide].classList.remove("active");
-    currentSlide = ((idx % slides.length) + slides.length) % slides.length;
-    slides[currentSlide].classList.add("active");
-    dots[currentSlide].classList.add("active");
-    startSlideshowAuto();
-  }
+  setTimeout(() => {
+    const card = document.querySelector("#gift-section .premium-card");
+    // Only add button if it doesn't already exist
+    if (!card.querySelector(".btn-next-gift")) {
+      const btn = document.createElement("button");
+      btn.className = "btn-primary btn-next-gift";
+      btn.textContent = "See Our Memories 📸";
+      btn.style.marginTop = "20px";
+      btn.style.animation = "pulseBeat 1.8s infinite alternate";
+      btn.addEventListener("click", () => navigateTo("memories"));
+      card.appendChild(btn);
+    }
+  }, 1000);
+});
 
-  // Lightbox
-  const lightbox = document.getElementById("gallery-lightbox");
-  const lightboxImg = document.getElementById("lightbox-img");
-  const lightboxCap = document.getElementById("lightbox-caption");
+// ─── 9. Memories Photo Slideshow ───
+let currentSlide = 0;
+let slideshowTimer = null;
+let memoriesReady = false;
+const slidesWrapper = document.getElementById("slides-wrapper");
+const heartDotsBox = document.getElementById("heart-dots-container");
 
-  function openLightbox(url, caption) {
-    synth.playClick();
-    lightboxImg.src = url;
-    lightboxCap.textContent = caption;
-    lightbox.classList.add("active");
-  }
+function initMemoriesSlideshow() {
+  if (memoriesReady) return;
+  memoriesReady = true;
 
-  document.getElementById("lightbox-close-btn").addEventListener("click", () => lightbox.classList.remove("active"));
-  lightbox.addEventListener("click", e => {
-    if (e.target === lightbox) lightbox.classList.remove("active");
+  slidesWrapper.innerHTML = "";
+  heartDotsBox.innerHTML = "";
+  currentSlide = 0;
+
+  CONFIG.memories.forEach((item, idx) => {
+    const slide = document.createElement("div");
+    slide.className = "slide" + (idx === 0 ? " active" : "");
+
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.alt = "Memory " + (idx + 1);
+    img.className = "slide-img";
+    img.addEventListener("click", () => openLightbox(item.url, item.caption));
+
+    const cap = document.createElement("div");
+    cap.className = "slide-caption-bar";
+    cap.textContent = item.caption;
+
+    slide.appendChild(img);
+    slide.appendChild(cap);
+    slidesWrapper.appendChild(slide);
+
+    const dot = document.createElement("span");
+    dot.className = "heart-dot" + (idx === 0 ? " active" : "");
+    dot.textContent = "♥";
+    dot.addEventListener("click", () => { synth.playClick(); goToSlide(idx); });
+    heartDotsBox.appendChild(dot);
   });
 
-  // Next button
-  document.getElementById("memories-next-btn").addEventListener("click", () => {
-    clearInterval(slideshowTimer);
-    navigateTo("letter");
+  // Navigation arrows
+  document.getElementById("prev-slide-btn").onclick = () => { synth.playClick(); goToSlide(currentSlide - 1); };
+  document.getElementById("next-slide-btn").onclick = () => { synth.playClick(); goToSlide(currentSlide + 1); };
+
+  // Swipe gesture
+  let touchX = 0;
+  slidesWrapper.addEventListener("touchstart", e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
+  slidesWrapper.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    if (dx < -40) goToSlide(currentSlide + 1);
+    else if (dx > 40) goToSlide(currentSlide - 1);
   });
 
-  // ─── 10. Typewriter Love Letter ───
-  const letterTextEl = document.getElementById("letter-typing-text");
-  const letterCursor = document.getElementById("letter-cursor-blink");
-  const letterHint = document.getElementById("letter-reveal-hint");
-  const heartFillContainer = document.getElementById("heart-fill-container");
-  const heartFillBtn = document.getElementById("heart-fill-btn");
-  let letterInterval = null;
-  let letterComplete = false;
+  startSlideshowAuto();
+}
 
-  function startTypewriterLetter() {
-    const letterText = CONFIG.letterText;
-    letterTextEl.textContent = "";
-    letterCursor.style.display = "inline-block";
-    letterHint.style.opacity = "1";
-    heartFillContainer.style.display = "none";
-    heartFillBtn.classList.remove("filled");
-    letterComplete = false;
+function startSlideshowAuto() {
+  clearInterval(slideshowTimer);
+  slideshowTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
+}
 
-    clearInterval(letterInterval);
-    letterInterval = null;   // we use rAF now, keep var for compat with reset
+function goToSlide(idx) {
+  const slides = slidesWrapper.querySelectorAll(".slide");
+  const dots = heartDotsBox.querySelectorAll(".heart-dot");
+  if (!slides.length) return;
+  slides[currentSlide].classList.remove("active");
+  dots[currentSlide].classList.remove("active");
+  currentSlide = ((idx % slides.length) + slides.length) % slides.length;
+  slides[currentSlide].classList.add("active");
+  dots[currentSlide].classList.add("active");
+  startSlideshowAuto();
+}
 
-    const paper      = document.getElementById("letter-paper-box");
-    const CHAR_RATE  = 45;   // ms per character — same visible speed as before
-    let charIdx      = 0;
-    let lastTime     = null;
-    let rafId        = null;
-    let scrollTimer  = null;
-    let userScrolled = false; // true once user manually scrolls — stops auto-scroll
+// Lightbox
+const lightbox = document.getElementById("gallery-lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+const lightboxCap = document.getElementById("lightbox-caption");
 
-    // Stop hijacking scroll as soon as the user touches or wheels the paper
-    function onUserScroll() { userScrolled = true; }
-    paper.addEventListener("scroll",     onUserScroll, { passive: true });
-    paper.addEventListener("touchstart", onUserScroll, { passive: true });
-    paper.addEventListener("wheel",      onUserScroll, { passive: true });
+function openLightbox(url, caption) {
+  synth.playClick();
+  lightboxImg.src = url;
+  lightboxCap.textContent = caption;
+  lightbox.classList.add("active");
+}
 
-    // Debounced auto-scroll — only runs while the user hasn't touched the paper.
-    // Schedules one scrollTop write per 150ms max so it never competes with
-    // the browser's own scroll handling.
-    function scheduleScroll() {
-      if (userScrolled || scrollTimer) return;
-      scrollTimer = setTimeout(() => {
-        if (!userScrolled) paper.scrollTop = paper.scrollHeight;
-        scrollTimer = null;
-      }, 150);
-    }
+document.getElementById("lightbox-close-btn").addEventListener("click", () => lightbox.classList.remove("active"));
+lightbox.addEventListener("click", e => {
+  if (e.target === lightbox) lightbox.classList.remove("active");
+});
 
-    function tick(timestamp) {
-      if (letterComplete) return;
+// Next button
+document.getElementById("memories-next-btn").addEventListener("click", () => {
+  clearInterval(slideshowTimer);
+  navigateTo("letter");
+});
 
-      if (lastTime === null) lastTime = timestamp;
-      const elapsed = timestamp - lastTime;
+// ─── 10. Typewriter Love Letter ───
+const letterTextEl = document.getElementById("letter-typing-text");
+const letterCursor = document.getElementById("letter-cursor-blink");
+const letterHint = document.getElementById("letter-reveal-hint");
+const heartFillContainer = document.getElementById("heart-fill-container");
+const heartFillBtn = document.getElementById("heart-fill-btn");
+let letterInterval = null;
+let letterComplete = false;
 
-      // How many characters should have been typed by now
-      const target = Math.min(
-        Math.floor(elapsed / CHAR_RATE),
-        letterText.length
-      );
+function startTypewriterLetter() {
+  const letterText = CONFIG.letterText;
+  letterTextEl.textContent = "";
+  letterCursor.style.display = "inline-block";
+  letterHint.style.opacity = "1";
+  heartFillContainer.style.display = "none";
+  heartFillBtn.classList.remove("filled");
+  letterComplete = false;
 
-      if (target > charIdx) {
-        // Append all pending characters in one DOM write
-        letterTextEl.textContent = letterText.slice(0, target);
-        charIdx = target;
-        scheduleScroll();
-      }
+  clearInterval(letterInterval);
+  letterInterval = null;   // we use rAF now, keep var for compat with reset
 
-      if (charIdx >= letterText.length) {
-        finishLetter(letterText);
-        return;
-      }
+  const paper = document.getElementById("letter-paper-box");
+  const CHAR_RATE = 45;   // ms per character — same visible speed as before
+  let charIdx = 0;
+  let lastTime = null;
+  let rafId = null;
+  let scrollTimer = null;
+  let userScrolled = false; // true once user manually scrolls — stops auto-scroll
 
-      rafId = requestAnimationFrame(tick);
-    }
+  // Stop hijacking scroll as soon as the user touches or wheels the paper
+  function onUserScroll() { userScrolled = true; }
+  paper.addEventListener("scroll", onUserScroll, { passive: true });
+  paper.addEventListener("touchstart", onUserScroll, { passive: true });
+  paper.addEventListener("wheel", onUserScroll, { passive: true });
 
-    // Store rafId on the interval slot so the reset path can cancel it
-    rafId = requestAnimationFrame(tick);
-    letterInterval = { _rafId: rafId, _scrollTimer: scrollTimer };
-    letterInterval._cancel = () => {
-      cancelAnimationFrame(rafId);
-      clearTimeout(scrollTimer);
-      paper.removeEventListener("scroll",     onUserScroll);
-      paper.removeEventListener("touchstart", onUserScroll);
-      paper.removeEventListener("wheel",      onUserScroll);
-    };
-
-    // Click-only skip (never fires during a scroll gesture on mobile)
-    function onPaperSkip() {
-      if (!letterComplete) finishLetter(letterText);
-    }
-    paper.removeEventListener("click",      paper._skipHandler);
-    paper.removeEventListener("touchstart", paper._skipTouchHandler);
-    paper._skipHandler      = onPaperSkip;
-    paper._skipTouchHandler = null;   // cleared — touchstart no longer used for skip
-    paper.addEventListener("click", onPaperSkip);
+  // Debounced auto-scroll — only runs while the user hasn't touched the paper.
+  // Schedules one scrollTop write per 150ms max so it never competes with
+  // the browser's own scroll handling.
+  function scheduleScroll() {
+    if (userScrolled || scrollTimer) return;
+    scrollTimer = setTimeout(() => {
+      if (!userScrolled) paper.scrollTop = paper.scrollHeight;
+      scrollTimer = null;
+    }, 150);
   }
 
-  function finishLetter(fullText) {
+  function tick(timestamp) {
     if (letterComplete) return;
 
-    // Cancel rAF loop
-    if (letterInterval && letterInterval._cancel) {
-      letterInterval._cancel();
-    } else {
-      clearInterval(letterInterval);
+    if (lastTime === null) lastTime = timestamp;
+    const elapsed = timestamp - lastTime;
+
+    // How many characters should have been typed by now
+    const target = Math.min(
+      Math.floor(elapsed / CHAR_RATE),
+      letterText.length
+    );
+
+    if (target > charIdx) {
+      // Append all pending characters in one DOM write
+      letterTextEl.textContent = letterText.slice(0, target);
+      charIdx = target;
+      scheduleScroll();
     }
 
-    letterComplete = true;
-    letterTextEl.textContent = fullText;
-    letterCursor.style.display = "none";
-    letterHint.style.opacity  = "0";
-    heartFillContainer.style.display = "flex";
+    if (charIdx >= letterText.length) {
+      finishLetter(letterText);
+      return;
+    }
 
-    // Single scroll-to-bottom, no forced-layout loop
-    const paper = document.getElementById("letter-paper-box");
-    requestAnimationFrame(() => { paper.scrollTop = paper.scrollHeight; });
+    rafId = requestAnimationFrame(tick);
   }
 
-  heartFillBtn.addEventListener("click", () => {
-    if (heartFillBtn.classList.contains("filled")) return;
-    synth.playChime();
-    heartFillBtn.classList.add("filled");
-    if (typeof confetti === "function") {
-      confetti({ particleCount: 70, spread: 70,
-        colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#C084FC"] });
-    }
-    setTimeout(() => navigateTo("finale"), 1600);
-  });
+  // Store rafId on the interval slot so the reset path can cancel it
+  rafId = requestAnimationFrame(tick);
+  letterInterval = { _rafId: rafId, _scrollTimer: scrollTimer };
+  letterInterval._cancel = () => {
+    cancelAnimationFrame(rafId);
+    clearTimeout(scrollTimer);
+    paper.removeEventListener("scroll", onUserScroll);
+    paper.removeEventListener("touchstart", onUserScroll);
+    paper.removeEventListener("wheel", onUserScroll);
+  };
 
-  // ─── 11. Grand Finale ───
-  let finaleReady = false;
+  // Click-only skip (never fires during a scroll gesture on mobile)
+  function onPaperSkip() {
+    if (!letterComplete) finishLetter(letterText);
+  }
+  paper.removeEventListener("click", paper._skipHandler);
+  paper.removeEventListener("touchstart", paper._skipTouchHandler);
+  paper._skipHandler = onPaperSkip;
+  paper._skipTouchHandler = null;   // cleared — touchstart no longer used for skip
+  paper.addEventListener("click", onPaperSkip);
+}
 
-  function initFinaleSection() {
-    if (finaleReady) return;
-    finaleReady = true;
+function finishLetter(fullText) {
+  if (letterComplete) return;
 
-    const video = document.getElementById("finale-video");
-    const title = document.getElementById("finale-title-text");
-    title.textContent = "Love You Endlessly, " + CONFIG.recipientName + "! 💖";
+  // Cancel rAF loop
+  if (letterInterval && letterInterval._cancel) {
+    letterInterval._cancel();
+  } else {
+    clearInterval(letterInterval);
+  }
 
-    if (CONFIG.videoUrl) {
-      video.src = CONFIG.videoUrl;
-    } else {
-      document.getElementById("finale-video-box").style.display = "none";
-    }
+  letterComplete = true;
+  letterTextEl.textContent = fullText;
+  letterCursor.style.display = "none";
+  letterHint.style.opacity = "0";
+  heartFillContainer.style.display = "flex";
 
-    launchFireworks();
+  // Single scroll-to-bottom, no forced-layout loop
+  const paper = document.getElementById("letter-paper-box");
+  requestAnimationFrame(() => { paper.scrollTop = paper.scrollHeight; });
+}
 
-    // Add multilingual "I love you" floating text
+heartFillBtn.addEventListener("click", () => {
+  if (heartFillBtn.classList.contains("filled")) return;
+  synth.playChime();
+  heartFillBtn.classList.add("filled");
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 70, spread: 70,
+      colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF", "#C084FC"]
+    });
+  }
+  setTimeout(() => navigateTo("finale"), 1600);
+});
+
+// ─── 11. Grand Finale ───
+let finaleReady = false;
+
+function initFinaleSection() {
+  if (finaleReady) return;
+  finaleReady = true;
+
+  const video = document.getElementById("finale-video");
+  const title = document.getElementById("finale-title-text");
+  title.textContent = "Love You Endlessly, " + CONFIG.recipientName + "! 💖";
+
+  if (CONFIG.videoUrl) {
+    video.src = CONFIG.videoUrl;
+  } else {
+    document.getElementById("finale-video-box").style.display = "none";
+  }
+
+  launchFireworks();
+
+  // Add multilingual "I love you" floating text
+  triggerEmojiShower("💖");
+}
+
+function launchFireworks() {
+  if (typeof confetti !== "function") return;
+  const duration = 8000;
+  const end = Date.now() + duration;
+  const defaults = {
+    startVelocity: 25, spread: 360, ticks: 50, zIndex: 0,
+    colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF", "#5B21B6", "#C084FC"]
+  };
+  const interval = setInterval(() => {
+    const left = end - Date.now();
+    if (left <= 0 || currentSectionId !== "finale") { clearInterval(interval); return; }
+    const count = Math.max(15, 40 * (left / duration));
+    confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.1 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
+    confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.7 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
+  }, 300);
+}
+
+// ─── 12. Replay ───
+document.getElementById("replay-flow-btn").addEventListener("click", () => {
+  // Reset state flags
+  balloonsPopped = 0;
+  balloonsReady = false;
+  candlesBlown = false;
+  candleGameReady = false;
+  giftOpened = false;
+  memoriesReady = false;
+  finaleReady = false;
+  letterComplete = false;
+  if (letterInterval && letterInterval._cancel) letterInterval._cancel();
+  else clearInterval(letterInterval);
+  clearInterval(slideshowTimer);
+  balloonIntervals.forEach(id => clearInterval(id));
+  balloonIntervals = [];
+
+  // Reset DOM
+  document.getElementById("balloon-canvas").innerHTML = "";
+  document.querySelectorAll(".flame").forEach(f => f.classList.remove("blown"));
+  const cakeMsg = document.getElementById("cake-message");
+  cakeMsg.textContent = "Blow the candles to make a wish!";
+  cakeMsg.style.color = "";
+  cakeMsg.style.fontSize = "";
+
+  const gw = document.getElementById("clickable-gift-box");
+  gw.classList.remove("opened");
+  const nBtn = document.querySelector(".btn-next-gift");
+  if (nBtn) nBtn.remove();
+  document.getElementById("gift-instruction").textContent = "Tap the gift box to open";
+
+  slidesWrapper.innerHTML = "";
+  heartDotsBox.innerHTML = "";
+
+  heartFillBtn.classList.remove("filled");
+  heartFillContainer.style.display = "none";
+  letterCursor.style.display = "inline-block";
+
+  // Restart hero subtitle
+  clearTimeout(heroTyperTimeout);
+  typeHeroSubtitle();
+
+  navigateTo("hero");
+});
+
+// ─── 13. Easter Eggs ───
+// A. Triple-click hero title
+const heroTitle = document.getElementById("hero-title-click");
+let tripleCount = 0;
+let tripleTimer = null;
+heroTitle.addEventListener("click", () => {
+  tripleCount++;
+  clearTimeout(tripleTimer);
+  tripleTimer = setTimeout(() => { tripleCount = 0; }, 1200);
+  if (tripleCount >= 3) {
+    tripleCount = 0;
     triggerEmojiShower("💖");
+    setTimeout(() => alert(CONFIG.hiddenMessage), 300);
   }
+});
 
-  function launchFireworks() {
-    if (typeof confetti !== "function") return;
-    const duration = 8000;
-    const end = Date.now() + duration;
-    const defaults = { startVelocity: 25, spread: 360, ticks: 50, zIndex: 0,
-      colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#5B21B6","#C084FC"] };
-    const interval = setInterval(() => {
-      const left = end - Date.now();
-      if (left <= 0 || currentSectionId !== "finale") { clearInterval(interval); return; }
-      const count = Math.max(15, 40 * (left / duration));
-      confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.1 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
-      confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.7 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
-    }, 300);
-  }
+// B. Long-press hero image
+const heroImg = document.getElementById("hero-image-wrapper-click");
+let longPressTimer = null;
+function startLongPress() {
+  longPressTimer = setTimeout(() => {
+    triggerEmojiShower("🥰");
+    alert(CONFIG.hiddenMessage);
+  }, 1500);
+}
+function cancelLongPress() { clearTimeout(longPressTimer); }
+heroImg.addEventListener("mousedown", startLongPress);
+heroImg.addEventListener("mouseup", cancelLongPress);
+heroImg.addEventListener("mouseleave", cancelLongPress);
+heroImg.addEventListener("touchstart", startLongPress, { passive: true });
+heroImg.addEventListener("touchend", cancelLongPress);
+heroImg.addEventListener("touchcancel", cancelLongPress);
 
-  // ─── 12. Replay ───
-  document.getElementById("replay-flow-btn").addEventListener("click", () => {
-    // Reset state flags
-    balloonsPopped = 0;
-    balloonsReady = false;
-    candlesBlown = false;
-    candleGameReady = false;
-    giftOpened = false;
-    memoriesReady = false;
-    finaleReady = false;
-    letterComplete = false;
-    if (letterInterval && letterInterval._cancel) letterInterval._cancel();
-    else clearInterval(letterInterval);
-    clearInterval(slideshowTimer);
-    balloonIntervals.forEach(id => clearInterval(id));
-    balloonIntervals = [];
-
-    // Reset DOM
-    document.getElementById("balloon-canvas").innerHTML = "";
-    document.querySelectorAll(".flame").forEach(f => f.classList.remove("blown"));
-    const cakeMsg = document.getElementById("cake-message");
-    cakeMsg.textContent = "Blow the candles to make a wish!";
-    cakeMsg.style.color = "";
-    cakeMsg.style.fontSize = "";
-
-    const gw = document.getElementById("clickable-gift-box");
-    gw.classList.remove("opened");
-    const nBtn = document.querySelector(".btn-next-gift");
-    if (nBtn) nBtn.remove();
-    document.getElementById("gift-instruction").textContent = "Tap the gift box to open";
-
-    slidesWrapper.innerHTML = "";
-    heartDotsBox.innerHTML = "";
-
-    heartFillBtn.classList.remove("filled");
-    heartFillContainer.style.display = "none";
-    letterCursor.style.display = "inline-block";
-
-    // Restart hero subtitle
-    clearTimeout(heroTyperTimeout);
-    typeHeroSubtitle();
-
-    navigateTo("hero");
-  });
-
-  // ─── 13. Easter Eggs ───
-  // A. Triple-click hero title
-  const heroTitle = document.getElementById("hero-title-click");
-  let tripleCount = 0;
-  let tripleTimer = null;
-  heroTitle.addEventListener("click", () => {
-    tripleCount++;
-    clearTimeout(tripleTimer);
-    tripleTimer = setTimeout(() => { tripleCount = 0; }, 1200);
-    if (tripleCount >= 3) {
-      tripleCount = 0;
-      triggerEmojiShower("💖");
-      setTimeout(() => alert(CONFIG.hiddenMessage), 300);
-    }
-  });
-
-  // B. Long-press hero image
-  const heroImg = document.getElementById("hero-image-wrapper-click");
-  let longPressTimer = null;
-  function startLongPress() {
-    longPressTimer = setTimeout(() => {
-      triggerEmojiShower("🥰");
-      alert(CONFIG.hiddenMessage);
-    }, 1500);
-  }
-  function cancelLongPress() { clearTimeout(longPressTimer); }
-  heroImg.addEventListener("mousedown", startLongPress);
-  heroImg.addEventListener("mouseup", cancelLongPress);
-  heroImg.addEventListener("mouseleave", cancelLongPress);
-  heroImg.addEventListener("touchstart", startLongPress, { passive: true });
-  heroImg.addEventListener("touchend", cancelLongPress);
-  heroImg.addEventListener("touchcancel", cancelLongPress);
-
-  // C. Konami Code
-  const konamiSeq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-  let konamiIdx = 0;
-  window.addEventListener("keydown", e => {
-    if (e.key === konamiSeq[konamiIdx]) {
-      konamiIdx++;
-      if (konamiIdx === konamiSeq.length) {
-        konamiIdx = 0;
-        triggerEmojiShower("🥰");
-        alert(CONFIG.konamiCodeResponse);
-      }
-    } else {
+// C. Konami Code
+const konamiSeq = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+let konamiIdx = 0;
+window.addEventListener("keydown", e => {
+  if (e.key === konamiSeq[konamiIdx]) {
+    konamiIdx++;
+    if (konamiIdx === konamiSeq.length) {
       konamiIdx = 0;
+      triggerEmojiShower("🥰");
+      alert(CONFIG.konamiCodeResponse);
     }
-  });
-
-  // Emoji rain shower helper
-  const rainContainer = document.getElementById("emoji-rain-shower");
-  function triggerEmojiShower(emoji) {
-    for (let i = 0; i < 40; i++) {
-      setTimeout(() => {
-        const el = document.createElement("div");
-        el.className = "falling-emoji";
-        el.textContent = emoji;
-        el.style.left = Math.random() * 100 + "vw";
-        el.style.animationDuration = (Math.random() * 2 + 2) + "s";
-        rainContainer.appendChild(el);
-        setTimeout(() => el.remove(), 4500);
-      }, i * 55);
-    }
+  } else {
+    konamiIdx = 0;
   }
+});
 
-  // ─── BOOT ───
-  // If intro was already played (session storage), boot immediately.
-  // Otherwise, startAppBoot() will be called by the intro completion callback.
-  if (_introAlreadyDone) {
-    startAppBoot();
+// Emoji rain shower helper
+const rainContainer = document.getElementById("emoji-rain-shower");
+function triggerEmojiShower(emoji) {
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const el = document.createElement("div");
+      el.className = "falling-emoji";
+      el.textContent = emoji;
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.animationDuration = (Math.random() * 2 + 2) + "s";
+      rainContainer.appendChild(el);
+      setTimeout(() => el.remove(), 4500);
+    }, i * 55);
   }
+}
 
-})();
+// ─── BOOT ───
+// If intro was already played (session storage), boot immediately.
+// Otherwise, startAppBoot() will be called by the intro completion callback.
+if (_introAlreadyDone) {
+  startAppBoot();
+}
+
+}) ();
