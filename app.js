@@ -288,7 +288,16 @@
 
     // Section-specific initialisations
     switch (sectionId) {
-      case "balloons": initBalloonsGame(); break;
+      case "balloons":
+        // Defer balloon init by two rAF ticks so the browser can:
+        //   1. Complete the section's entry transition first paint (rAF 1)
+        //   2. Commit compositor layers before reading offsetWidth (rAF 2)
+        // Without this, offsetWidth read + 8 will-change DOM insertions happen
+        // mid-transition, causing a compositor budget spike = first-frame stutter.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => { initBalloonsGame(); });
+        });
+        break;
       case "cake":     initCandleGame(); break;
       case "memories": initMemoriesSlideshow(); break;
       case "letter":   startTypewriterLetter(); break;
@@ -341,6 +350,43 @@
 
     const colors = ["#C9B0F5","#A67FE8","#7C3AED","#9B6AF0","#D1B8F7","#B89AEC","#E4D4FF","#8B5CF6"];
 
+    // ── Layout constants ──────────────────────────────────────────────────
+    // Canvas fills the section viewport via position:absolute inset:0.
+    const canvasW  = canvas.offsetWidth  || window.innerWidth;
+    const canvasH  = canvas.offsetHeight || window.innerHeight;
+    const isMobile = canvasW < 600;
+
+    // Match exactly what CSS clamp() produces for the balloon dimensions.
+    const bW = Math.round(Math.min(Math.max(isMobile ? 40 : 44,
+                                            canvasW * (isMobile ? 0.09 : 0.10)),
+                                   isMobile ? 56 : 80));
+    const bH = Math.round(Math.min(Math.max(isMobile ? 48 : 52,
+                                            canvasW * (isMobile ? 0.11 : 0.12)),
+                                   isMobile ? 68 : 96));
+
+    // 8 balloons in 2 rows of 4.
+    // Row 0 = even indices (0,2,4,6), Row 1 = odd indices (1,3,5,7).
+    const COLS      = 4;
+    const ROWS      = 2;
+
+    // Horizontal: pad each side by exactly one balloon-width so no balloon
+    // can ever touch the screen edge.  Then divide the remaining usable
+    // width into (COLS-1) equal gaps.
+    const hPad      = bW;                              // one balloon-width of padding
+    const usableW   = canvasW - 2 * hPad - bW;        // space between first and last left-edge
+    const colGap    = COLS > 1 ? usableW / (COLS - 1) : 0;
+
+    // Reserve the top 70px on mobile to clear the music-toggle button.
+    const topClear  = isMobile ? 70 : 30;
+    // Vertical gap between the two rows — generous enough to look like a
+    // proper zig-zag but still well above the info card at the bottom.
+    const rowGap    = isMobile ? Math.round(canvasH * 0.14)
+                               : Math.round(canvasH * 0.12);
+
+    // Row 0 top-edge, Row 1 top-edge (pixels from canvas top).
+    const rowTop = [topClear, topClear + rowGap];
+    // ─────────────────────────────────────────────────────────────────────
+
     CONFIG.balloonKeywords.forEach((word, index) => {
       const balloon = document.createElement("div");
       balloon.className = "balloon";
@@ -349,31 +395,29 @@
 
       const bgColor = colors[index % colors.length];
       balloon.style.backgroundColor = bgColor;
-      balloon.style.color = bgColor;
+      balloon.style.color           = bgColor;
 
-      // ── Responsive zig-zag placement (percentage-based, never overflows) ──
-      const isMobile = window.innerWidth < 600;
+      // Which column and row this balloon occupies in the 4×2 grid.
+      const col = index % COLS;
+      const row = Math.floor(index / COLS);
 
-      // Horizontal spread boundaries — desktop uses full width, mobile pulls
-      // inward so outermost balloons stay clear of screen edges & music button.
-      const spreadStart = isMobile ? 8  : 6.25;  // % from left for first balloon
-      const spreadEnd   = isMobile ? 86 : 93.75; // % from left for last balloon
-      const spreadRange = spreadEnd - spreadStart;
-      // Distribute evenly across the range
-      const leftPct = totalBalloons > 1
-        ? spreadStart + (index / (totalBalloons - 1)) * spreadRange
-        : 50;
-      balloon.style.left      = leftPct + "%";
-      balloon.style.transform = "translateX(-50%)"; // centre balloon on that point
+      // ── Pixel-precise positioning ─────────────────────────────────────
+      // left = left edge of the balloon in pixels (never negative, never
+      // exceeds canvasW - bW, so the right edge never leaves the canvas).
+      const leftPx = hPad + col * colGap;
+      const topPx  = rowTop[row] || rowTop[ROWS - 1];
 
-      // Vertical zig-zag: even index → row A (higher), odd → row B (lower).
-      // On mobile start lower to clear the music toggle button in the top-right.
-      const rowA = isMobile ? 8  : 3;
-      const rowB = isMobile ? 22 : 15;
-      balloon.style.top = (index % 2 === 0 ? rowA : rowB) + "%";
+      balloon.style.left = leftPx + "px";
+      balloon.style.top  = topPx  + "px";
+      // ─────────────────────────────────────────────────────────────────
 
-      // Sway phase offset
-      balloon.style.animationDelay = (index * 0.22) + "s";
+      // Stutter fix: set animationDelay BEFORE appending to the DOM.
+      // If the delay is set after insertion, the browser renders one
+      // zero-delay frame first (showing the balloon at its un-animated
+      // position) which appears as a one-frame stutter/jump.
+      // Setting it before insertion means the first painted frame already
+      // respects the delay — the animation starts clean.
+      balloon.style.animationDelay = (col * 0.28 + row * 0.14) + "s";
 
       // String
       const string = document.createElement("div");
@@ -385,11 +429,9 @@
         e.stopPropagation();
         e.preventDefault();
 
-        // Brief visual shrink that doesn't fight the sway animation
         balloon.classList.add("popping");
         synth.playPop();
 
-        // Confetti at balloon position
         const rect = balloon.getBoundingClientRect();
         if (typeof confetti === "function") {
           confetti({
@@ -397,22 +439,37 @@
             spread: 55,
             origin: {
               x: (rect.left + rect.width / 2) / window.innerWidth,
-              y: (rect.top + rect.height / 2) / window.innerHeight
+              y: (rect.top  + rect.height / 2) / window.innerHeight
             },
             colors: [bgColor, "#C8A84B", "#7C3AED"]
           });
         }
 
-        // Show keyword text — clamped to viewport so it never overflows
+        // Pop text — appended to document.body with position:fixed so it
+        // is completely outside the .story-section stacking context.
+        // The section has overflow-x:hidden which implicitly clips overflow-y
+        // in some browsers, and its own transform creates a containing block
+        // that traps absolutely-positioned descendants. Using fixed + body
+        // bypasses both constraints entirely.
         const popText = document.createElement("div");
-        popText.className = "balloon-pop-text";
+        popText.className   = "balloon-pop-text";
         popText.textContent = word;
-        // Centre X on the balloon, clamped so the label stays on-screen
-        const centreX = rect.left + rect.width / 2;
-        const clampedX = Math.min(Math.max(centreX, window.innerWidth * 0.12), window.innerWidth * 0.88);
-        popText.style.left     = clampedX + "px";
-        popText.style.top      = rect.top + "px";
+
+        // Viewport-centre of the balloon. Clamped so the pill label
+        // (≤220px wide, centred via translateX(-50%)) never overflows
+        // either side of the screen regardless of which balloon was popped.
+        const vCentreX = rect.left + rect.width  / 2;
+        const vCentreY = rect.top  + rect.height / 2;
+        const halfPill = Math.min(110, window.innerWidth * 0.40);
+        const safeX    = Math.min(
+          Math.max(vCentreX, halfPill + 8),
+          window.innerWidth - halfPill - 8
+        );
+
         popText.style.position = "fixed";
+        popText.style.left     = safeX + "px";
+        popText.style.top      = vCentreY + "px";
+        popText.style.zIndex   = "9999";   // above every stacking context
         document.body.appendChild(popText);
         setTimeout(() => popText.remove(), 2000);
 
@@ -421,7 +478,6 @@
         countEl.textContent = balloonsPopped;
 
         if (balloonsPopped >= totalBalloons) {
-          // Clear all remaining float intervals
           balloonIntervals.forEach(id => clearInterval(id));
           setTimeout(() => {
             if (typeof confetti === "function") {
@@ -432,9 +488,10 @@
         }
       }
 
-      balloon.addEventListener("click", handlePop);
+      balloon.addEventListener("click",      handlePop);
       balloon.addEventListener("touchstart", handlePop, { passive: false });
 
+      // Append AFTER all styles are set so the first painted frame is correct.
       canvas.appendChild(balloon);
     });
   }
