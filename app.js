@@ -232,21 +232,34 @@
 
   // ─── 3. Floating Hearts Background ───
   const bgHeartsContainer = document.getElementById("bg-hearts-container");
-  const heartSymbols = ["💜","💖","💕","✨","🌸","💝","⭐","💫"];
+  // Violet hearts appear 3× more than other symbols for a subtle romantic density
+  const heartSymbols = [
+    "💜","💜","💜",   // deep violet — most frequent
+    "🪻","🪻",        // light violet blossom
+    "💟","💟",        // violet heart decoration
+    "💖","💕","💝",   // accent pinks — occasional warmth
+    "✨","⭐","💫",   // sparkle / star
+    "🌸"              // soft floral
+  ];
 
   function spawnFloatingHeart() {
-    if (document.querySelectorAll(".floating-heart").length > 12) return;
+    if (document.querySelectorAll(".floating-heart").length > 26) return;
     const el = document.createElement("div");
     el.className = "floating-heart";
-    el.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+    const symbol = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+    el.textContent = symbol;
     el.style.left = Math.random() * 100 + "vw";
-    el.style.fontSize = (Math.random() * 1.2 + 0.8) + "rem";
-    const dur = Math.random() * 5 + 8;
+    // Hearts render slightly smaller for subtlety; stars/sparkles keep the full range
+    const isHeart = ["💜","🪻","💟","💖","💕","💝","🌸"].includes(symbol);
+    el.style.fontSize = isHeart
+      ? (Math.random() * 0.7 + 0.65) + "rem"   // 0.65–1.35 rem — small & elegant
+      : (Math.random() * 0.9 + 0.85) + "rem";   // 0.85–1.75 rem — sparkles slightly larger
+    const dur = Math.random() * 3 + 6;
     el.style.animationDuration = dur + "s";
     bgHeartsContainer.appendChild(el);
     setTimeout(() => el.remove(), dur * 1000 + 500);
   }
-  setInterval(spawnFloatingHeart, 1800);
+  setInterval(spawnFloatingHeart, 900);
 
   // ─── 4. Section / State Machine ───
   const SECTIONS = ["hero", "balloons", "cake", "gift", "memories", "letter", "finale"];
@@ -342,24 +355,12 @@
       const leftPct = 8 + (index * (84 / totalBalloons)) + (Math.random() * 4);
       balloon.style.left = leftPct + "%";
 
-      // Stagger entry from below
-      let currentBottom = -120 - index * 90;
-      balloon.style.bottom = currentBottom + "px";
+      // Fix balloons near the top of the canvas
+      const topPct = 6 + (index % 2) * 12 + (Math.random() * 8);
+      balloon.style.top = topPct + "%";
 
       // Sway phase offset
       balloon.style.animationDelay = (Math.random() * 2) + "s";
-
-      const speed = 0.8 + Math.random() * 0.8;
-
-      const floatId = setInterval(() => {
-        if (currentSectionId !== "balloons") { clearInterval(floatId); return; }
-        currentBottom += speed;
-        balloon.style.bottom = currentBottom + "px";
-        if (currentBottom > window.innerHeight + 50) {
-          currentBottom = -150;
-        }
-      }, 16);
-      balloonIntervals.push(floatId);
 
       // String
       const string = document.createElement("div");
@@ -370,7 +371,6 @@
       function handlePop(e) {
         e.stopPropagation();
         e.preventDefault();
-        clearInterval(floatId);
         synth.playPop();
 
         // Confetti at balloon position

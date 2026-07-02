@@ -68,7 +68,7 @@ body {
   position: absolute;
   bottom: -50px;
   opacity: 0.40;
-  animation: floatUp 12s linear infinite;
+  animation: floatUp 8s linear infinite;
   will-change: transform;
 }
 @keyframes floatUp {
@@ -358,7 +358,11 @@ body {
 }
 .balloon-string {
   position: absolute;
-  bottom: -45px;
+  top: 100%;
+  left: calc(50% - 1px);
+  width: 2px; height: 45px;
+  background: rgba(180, 140, 255, 0.35);
+}
   left: calc(50% - 1px);
   width: 2px; height: 45px;
   background: rgba(80, 20, 180, 0.18);
