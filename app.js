@@ -521,8 +521,8 @@
     let micActive = false;
     // Track consecutive frames above threshold for sustained-blow detection
     let blowFrames = 0;
-    const BLOW_FRAMES_NEEDED = 5;   // ~300ms sustained blow at 100ms intervals
-    const BLOW_RMS_THRESHOLD = 0.05; // RMS amplitude threshold (0–1 range)
+    const BLOW_FRAMES_NEEDED = 8;   // ~300ms sustained blow at 100ms intervals
+    const BLOW_RMS_THRESHOLD = 0.08; // RMS amplitude threshold (0–1 range)
 
     // ── Start mic — can be retried if previous attempt failed ──
     function tryStartMic() {
