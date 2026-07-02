@@ -612,12 +612,21 @@
     }
 
     // ── Blow button — works on both click (desktop) and touchend (mobile) ──
+    let manualFallbackReady = false;
+
     function onBlowBtn(e) {
-      e.preventDefault();      // prevent ghost click on mobile
-      if (!micActive) {
-        tryStartMic();         // first tap wakes the mic (or retries)
+      e.preventDefault(); // prevent ghost click on mobile
+
+      if (!micActive && !manualFallbackReady) {
+        // First tap: Wake the mic
+        tryStartMic();
+        // Change button to be a manual fallback
+        manualFallbackReady = true;
+        blowBtn.textContent = "Tap to Manually Extinguish 💨";
+      } else {
+        // Second tap or mic failed: Manual fallback
+        extinguishCandles();
       }
-      extinguishCandles();     // also works as manual fallback
     }
 
     blowBtn.addEventListener("click",    onBlowBtn);
@@ -626,9 +635,12 @@
     // On desktop, try starting the mic immediately (no gesture restriction)
     if (isSecure && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
       tryStartMic();
+      manualFallbackReady = true;
+      blowBtn.textContent = "Tap to Manually Extinguish 💨";
     } else {
       // Mobile: hint user to tap button or blow
-      micIndicator.textContent = "Tap the button or blow into your mic 🎤";
+      micIndicator.textContent = "Tap the button to enable microphone 🎤";
+      blowBtn.textContent = "Enable Microphone 🎤";
     }
   }
 
