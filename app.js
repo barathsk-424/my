@@ -351,16 +351,29 @@
       balloon.style.backgroundColor = bgColor;
       balloon.style.color = bgColor;
 
-      // Spread balloons horizontally
-      const leftPct = 8 + (index * (84 / totalBalloons)) + (Math.random() * 4);
-      balloon.style.left = leftPct + "%";
+      // ── Responsive zig-zag placement (percentage-based, never overflows) ──
+      const isMobile = window.innerWidth < 600;
 
-      // Fix balloons near the top of the canvas
-      const topPct = 6 + (index % 2) * 12 + (Math.random() * 8);
-      balloon.style.top = topPct + "%";
+      // Horizontal spread boundaries — desktop uses full width, mobile pulls
+      // inward so outermost balloons stay clear of screen edges & music button.
+      const spreadStart = isMobile ? 8  : 6.25;  // % from left for first balloon
+      const spreadEnd   = isMobile ? 86 : 93.75; // % from left for last balloon
+      const spreadRange = spreadEnd - spreadStart;
+      // Distribute evenly across the range
+      const leftPct = totalBalloons > 1
+        ? spreadStart + (index / (totalBalloons - 1)) * spreadRange
+        : 50;
+      balloon.style.left      = leftPct + "%";
+      balloon.style.transform = "translateX(-50%)"; // centre balloon on that point
+
+      // Vertical zig-zag: even index → row A (higher), odd → row B (lower).
+      // On mobile start lower to clear the music toggle button in the top-right.
+      const rowA = isMobile ? 8  : 3;
+      const rowB = isMobile ? 22 : 15;
+      balloon.style.top = (index % 2 === 0 ? rowA : rowB) + "%";
 
       // Sway phase offset
-      balloon.style.animationDelay = (Math.random() * 2) + "s";
+      balloon.style.animationDelay = (index * 0.22) + "s";
 
       // String
       const string = document.createElement("div");
@@ -371,6 +384,9 @@
       function handlePop(e) {
         e.stopPropagation();
         e.preventDefault();
+
+        // Brief visual shrink that doesn't fight the sway animation
+        balloon.classList.add("popping");
         synth.playPop();
 
         // Confetti at balloon position
@@ -387,12 +403,15 @@
           });
         }
 
-        // Show keyword text
+        // Show keyword text — clamped to viewport so it never overflows
         const popText = document.createElement("div");
         popText.className = "balloon-pop-text";
         popText.textContent = word;
-        popText.style.left = rect.left + "px";
-        popText.style.top = rect.top + "px";
+        // Centre X on the balloon, clamped so the label stays on-screen
+        const centreX = rect.left + rect.width / 2;
+        const clampedX = Math.min(Math.max(centreX, window.innerWidth * 0.12), window.innerWidth * 0.88);
+        popText.style.left     = clampedX + "px";
+        popText.style.top      = rect.top + "px";
         popText.style.position = "fixed";
         document.body.appendChild(popText);
         setTimeout(() => popText.remove(), 2000);
@@ -430,44 +449,78 @@
     if (candleGameReady) return;
     candleGameReady = true;
 
-    const blowBtn = document.getElementById("candle-blow-btn");
+    const blowBtn   = document.getElementById("candle-blow-btn");
     const micIndicator = document.getElementById("mic-status-indicator");
 
-    // Fallback blow button
-    blowBtn.addEventListener("click", () => extinguishCandles());
+    const isSecure = location.protocol === "https:"
+      || location.hostname === "localhost"
+      || location.hostname === "127.0.0.1";
 
-    // Try mic (only works on https or localhost, not file://)
-    const isSecure = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+    // Track whether mic setup has been attempted
+    let micInitialised = false;
 
-    if (isSecure && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // ── Start mic AFTER a user gesture so AudioContext resumes on mobile ──
+    function tryStartMic() {
+      if (micInitialised || !isSecure) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+      micInitialised = true;
+
       navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
         micStream = stream;
+
+        // Create AudioContext only after a gesture — guaranteed resumed on mobile
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        source.connect(analyser);
-        micIndicator.textContent = "🎤 Blow into your microphone!";
 
-        const bufLen = analyser.frequencyBinCount;
-        const data = new Uint8Array(bufLen);
+        // Some browsers need an explicit resume even after a gesture
+        const startListening = () => {
+          const source   = audioCtx.createMediaStreamSource(stream);
+          const analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 256;
+          source.connect(analyser);
+          micIndicator.textContent = "🎤 Blow into your microphone!";
 
-        micCheckInterval = setInterval(() => {
-          if (currentSectionId !== "cake" || candlesBlown) {
-            clearInterval(micCheckInterval);
-            stopMicrophone();
-            return;
-          }
-          analyser.getByteFrequencyData(data);
-          let sum = 0;
-          for (let i = 0; i < bufLen; i++) sum += data[i];
-          if (sum / bufLen > 55) extinguishCandles();
-        }, 100);
+          const bufLen = analyser.frequencyBinCount;
+          const data   = new Uint8Array(bufLen);
+
+          micCheckInterval = setInterval(() => {
+            if (currentSectionId !== "cake" || candlesBlown) {
+              clearInterval(micCheckInterval);
+              stopMicrophone();
+              return;
+            }
+            analyser.getByteFrequencyData(data);
+            let sum = 0;
+            for (let i = 0; i < bufLen; i++) sum += data[i];
+            if (sum / bufLen > 55) extinguishCandles();
+          }, 100);
+        };
+
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().then(startListening).catch(startListening);
+        } else {
+          startListening();
+        }
       }).catch(() => {
         micIndicator.textContent = "Tap the button to blow out the candles!";
       });
+    }
+
+    // ── Blow button — works on both click (desktop) and touchend (mobile) ──
+    function onBlowBtn(e) {
+      e.preventDefault();      // prevent ghost click on mobile
+      tryStartMic();           // first tap wakes the mic
+      extinguishCandles();     // also works as manual fallback
+    }
+
+    blowBtn.addEventListener("click",    onBlowBtn);
+    blowBtn.addEventListener("touchend", onBlowBtn, { passive: false });
+
+    // On desktop, try starting the mic immediately (no gesture restriction)
+    if (isSecure && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      tryStartMic();
     } else {
-      micIndicator.textContent = "Tap the button to blow out the candles!";
+      // Mobile: hint user to tap button or blow
+      micIndicator.textContent = "Tap the button or blow into your mic 🎤";
     }
   }
 
@@ -649,46 +702,103 @@
     heartFillContainer.style.display = "none";
     heartFillBtn.classList.remove("filled");
     letterComplete = false;
-    let charIdx = 0;
 
     clearInterval(letterInterval);
+    letterInterval = null;   // we use rAF now, keep var for compat with reset
 
-    letterInterval = setInterval(() => {
-      if (charIdx < letterText.length) {
-        if (Math.random() > 0.5) synth.playClick();
-        letterTextEl.textContent += letterText.charAt(charIdx);
-        charIdx++;
-        // Scroll parchment to bottom
-        const paper = document.getElementById("letter-paper-box");
-        paper.scrollTop = paper.scrollHeight;
-      } else {
-        finishLetter(letterText);
-      }
-    }, 45);
+    const paper      = document.getElementById("letter-paper-box");
+    const CHAR_RATE  = 45;   // ms per character — same visible speed as before
+    let charIdx      = 0;
+    let lastTime     = null;
+    let rafId        = null;
+    let scrollTimer  = null;
+    let userScrolled = false; // true once user manually scrolls — stops auto-scroll
 
-    // Click to skip
-    function onPaperClick() {
-      if (!letterComplete) {
-        finishLetter(letterText);
-      }
+    // Stop hijacking scroll as soon as the user touches or wheels the paper
+    function onUserScroll() { userScrolled = true; }
+    paper.addEventListener("scroll",     onUserScroll, { passive: true });
+    paper.addEventListener("touchstart", onUserScroll, { passive: true });
+    paper.addEventListener("wheel",      onUserScroll, { passive: true });
+
+    // Debounced auto-scroll — only runs while the user hasn't touched the paper.
+    // Schedules one scrollTop write per 150ms max so it never competes with
+    // the browser's own scroll handling.
+    function scheduleScroll() {
+      if (userScrolled || scrollTimer) return;
+      scrollTimer = setTimeout(() => {
+        if (!userScrolled) paper.scrollTop = paper.scrollHeight;
+        scrollTimer = null;
+      }, 150);
     }
-    const paper = document.getElementById("letter-paper-box");
-    paper.removeEventListener("click", paper._skipHandler);
-    paper._skipHandler = onPaperClick;
-    paper.addEventListener("click", onPaperClick);
+
+    function tick(timestamp) {
+      if (letterComplete) return;
+
+      if (lastTime === null) lastTime = timestamp;
+      const elapsed = timestamp - lastTime;
+
+      // How many characters should have been typed by now
+      const target = Math.min(
+        Math.floor(elapsed / CHAR_RATE),
+        letterText.length
+      );
+
+      if (target > charIdx) {
+        // Append all pending characters in one DOM write
+        letterTextEl.textContent = letterText.slice(0, target);
+        charIdx = target;
+        scheduleScroll();
+      }
+
+      if (charIdx >= letterText.length) {
+        finishLetter(letterText);
+        return;
+      }
+
+      rafId = requestAnimationFrame(tick);
+    }
+
+    // Store rafId on the interval slot so the reset path can cancel it
+    rafId = requestAnimationFrame(tick);
+    letterInterval = { _rafId: rafId, _scrollTimer: scrollTimer };
+    letterInterval._cancel = () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(scrollTimer);
+      paper.removeEventListener("scroll",     onUserScroll);
+      paper.removeEventListener("touchstart", onUserScroll);
+      paper.removeEventListener("wheel",      onUserScroll);
+    };
+
+    // Click-only skip (never fires during a scroll gesture on mobile)
+    function onPaperSkip() {
+      if (!letterComplete) finishLetter(letterText);
+    }
+    paper.removeEventListener("click",      paper._skipHandler);
+    paper.removeEventListener("touchstart", paper._skipTouchHandler);
+    paper._skipHandler      = onPaperSkip;
+    paper._skipTouchHandler = null;   // cleared — touchstart no longer used for skip
+    paper.addEventListener("click", onPaperSkip);
   }
 
   function finishLetter(fullText) {
     if (letterComplete) return;
-    clearInterval(letterInterval);
+
+    // Cancel rAF loop
+    if (letterInterval && letterInterval._cancel) {
+      letterInterval._cancel();
+    } else {
+      clearInterval(letterInterval);
+    }
+
     letterComplete = true;
     letterTextEl.textContent = fullText;
     letterCursor.style.display = "none";
-    letterHint.style.opacity = "0";
+    letterHint.style.opacity  = "0";
     heartFillContainer.style.display = "flex";
-    // Scroll to bottom
+
+    // Single scroll-to-bottom, no forced-layout loop
     const paper = document.getElementById("letter-paper-box");
-    paper.scrollTop = paper.scrollHeight;
+    requestAnimationFrame(() => { paper.scrollTop = paper.scrollHeight; });
   }
 
   heartFillBtn.addEventListener("click", () => {
@@ -751,7 +861,8 @@
     memoriesReady = false;
     finaleReady = false;
     letterComplete = false;
-    clearInterval(letterInterval);
+    if (letterInterval && letterInterval._cancel) letterInterval._cancel();
+    else clearInterval(letterInterval);
     clearInterval(slideshowTimer);
     balloonIntervals.forEach(id => clearInterval(id));
     balloonIntervals = [];
