@@ -2,102 +2,154 @@
 (function () {
   "use strict";
 
+  // ─── 0. Gift Box Intro Screen ───────────────────────────────
+  (function initGiftIntro() {
+    const introScreen = document.getElementById("gift-intro-screen");
+    const loaderScreen = document.getElementById("loader-screen");
+
+    // Only show once per browser session
+    if (sessionStorage.getItem("giftIntroPlayed") === "1") {
+      introScreen.classList.add("hidden");
+      return; // boot the rest of the app normally
+    }
+
+    // Hide loader until intro is done
+    if (loaderScreen) loaderScreen.style.display = "none";
+
+    // ── Spawn floating sparkles ──
+    const sparkleLayer = document.getElementById("gift-sparkles-layer");
+    const sparkleCount = 22;
+    for (let i = 0; i < sparkleCount; i++) {
+      const s = document.createElement("div");
+      s.className = "gib-sparkle";
+      const size = 30 + Math.random() * 60;
+      s.style.cssText = [
+        `width:${size}px`,
+        `height:${size}px`,
+        `left:${Math.random() * 100}%`,
+        `top:${Math.random() * 100}%`,
+        `--dur:${2 + Math.random() * 3}s`,
+        `--delay:${Math.random() * 2}s`,
+      ].join(";");
+      sparkleLayer.appendChild(s);
+    }
+
+    // ── Burst particles (hearts + confetti) ──
+    function spawnParticles() {
+      const container = document.getElementById("gib-particles");
+      const hearts = ["💜","💖","✨","💎","🌸","⭐","💫"];
+      const confettiColors = ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#5B21B6","#C084FC","#D1B8F7"];
+
+      // 20 heart emojis
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement("span");
+        p.className = "gib-particle";
+        p.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        const angle = (Math.random() * 360) * (Math.PI / 180);
+        const dist  = 90 + Math.random() * 140;
+        p.style.cssText = [
+          `--tx:${Math.cos(angle) * dist}px`,
+          `--ty:${Math.sin(angle) * dist}px`,
+          `--rot:${Math.random() * 360}deg`,
+          `--dur:${1.1 + Math.random() * 0.5}s`,
+          `--delay:${0.3 + Math.random() * 0.3}s`,
+        ].join(";");
+        container.appendChild(p);
+      }
+      // 30 confetti dots
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement("div");
+        p.className = "gib-confetti-dot";
+        p.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+        const angle = (Math.random() * 360) * (Math.PI / 180);
+        const dist  = 100 + Math.random() * 160;
+        p.style.cssText += [
+          `--tx:${Math.cos(angle) * dist}px`,
+          `--ty:${Math.sin(angle) * dist}px`,
+          `--rot:${Math.random() * 540}deg`,
+          `--dur:${1.2 + Math.random() * 0.6}s`,
+          `--delay:${0.25 + Math.random() * 0.4}s`,
+        ].join(";");
+        container.appendChild(p);
+      }
+    }
+
+    // ── canvas-confetti burst (loaded async, fired if available) ──
+    function fireConfettiBurst() {
+      if (typeof confetti !== "function") return;
+      const origin = { x: 0.5, y: 0.5 };
+      confetti({ particleCount: 80, spread: 110, startVelocity: 35, origin, colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#fff"] });
+      setTimeout(() => confetti({ particleCount: 40, spread: 60, startVelocity: 20, origin, colors: ["#5B21B6","#C084FC","#D1B8F7","#C8A84B"] }), 200);
+    }
+
+    // ── One-shot click/tap handler ──
+    let triggered = false;
+    const giftBox = document.getElementById("gift-intro-box");
+
+    function openGift(e) {
+      if (triggered) return;
+      triggered = true;
+      e.stopPropagation();
+
+      // 1. Mark as triggered (stops hover float, starts open CSS)
+      giftBox.classList.add("triggered");
+
+      // 2. Spawn DOM particles (fast CSS burst)
+      spawnParticles();
+
+      // 3. canvas-confetti burst slightly later
+      setTimeout(fireConfettiBurst, 350);
+
+      // 4. Fade out intro after animations settle → show loader/main
+      setTimeout(() => {
+        introScreen.classList.add("exit");
+
+        setTimeout(() => {
+          introScreen.classList.add("hidden");
+          sessionStorage.setItem("giftIntroPlayed", "1");
+
+          // Restore and kick off normal app boot
+          if (loaderScreen) {
+            loaderScreen.style.display = "";
+            loaderScreen.style.opacity = "1";
+          }
+          startAppBoot();
+        }, 900); // matches the CSS exit transition duration
+      }, 1800);
+    }
+
+    giftBox.addEventListener("click", openGift);
+    giftBox.addEventListener("touchstart", openGift, { passive: false });
+    giftBox.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") openGift(e);
+    });
+  })();
+
+  // Flag so the BOOT block at the bottom knows whether to auto-start
+  // (intro already shown / skipped via session storage → boot immediately)
+  const _introAlreadyDone = sessionStorage.getItem("giftIntroPlayed") === "1";
+
+  // startAppBoot is called either by the intro completion OR directly below
+  function startAppBoot() {
+    setTimeout(() => {
+      const loader = document.getElementById("loader-screen");
+      if (!loader) return;
+      loader.style.opacity = "0";
+      setTimeout(() => { if (loader.parentNode) loader.remove(); }, 1000);
+      navigateTo("hero");
+      typeHeroSubtitle();
+    }, 2200);
+  }
+
   // ─── 1. Audio Engine (Procedural Synthesizer for SFX) ───
+  // All synth methods are intentionally silent — only background music plays.
   class SoundSynth {
-    constructor() {
-      this.ctx = null;
-    }
-
-    init() {
-      if (!this.ctx) {
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (this.ctx.state === "suspended") {
-        this.ctx.resume();
-      }
-    }
-
-    playPop() {
-      try {
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(400, now);
-        osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
-      } catch (_) {}
-    }
-
-    playBlow() {
-      try {
-        this.init();
-        const now = this.ctx.currentTime;
-        const bufferSize = Math.floor(this.ctx.sampleRate * 0.4);
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.value = 400;
-        filter.Q.value = 1.0;
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        noise.start(now);
-      } catch (_) {}
-    }
-
-    playChime() {
-      try {
-        this.init();
-        const now = this.ctx.currentTime;
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.value = freq;
-          const t = now + idx * 0.08;
-          gain.gain.setValueAtTime(0, now);
-          gain.gain.linearRampToValueAtTime(0.12, t + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(t);
-          osc.stop(t + 0.6);
-        });
-      } catch (_) {}
-    }
-
-    playClick() {
-      try {
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(1500, now);
-        osc.frequency.exponentialRampToValueAtTime(500, now + 0.02);
-        gain.gain.setValueAtTime(0.04, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.03);
-      } catch (_) {}
-    }
+    constructor() { this.ctx = null; }
+    init()      {}
+    playPop()   {}
+    playBlow()  {}
+    playChime() {}
+    playClick() {}
   }
 
   const synth = new SoundSynth();
@@ -130,7 +182,6 @@
   }
 
   function toggleMusic() {
-    synth.init();
     if (!bgMusic) return;
     if (isPlayingMusic) {
       bgMusic.pause();
@@ -181,7 +232,7 @@
 
   // ─── 3. Floating Hearts Background ───
   const bgHeartsContainer = document.getElementById("bg-hearts-container");
-  const heartSymbols = ["❤️", "💖", "💕", "🌸", "✨", "💝"];
+  const heartSymbols = ["💜","💖","💕","✨","🌸","💝","⭐","💫"];
 
   function spawnFloatingHeart() {
     if (document.querySelectorAll(".floating-heart").length > 12) return;
@@ -252,7 +303,6 @@
   }
 
   heroReadyBtn.addEventListener("click", () => {
-    synth.init();
     playMusic();
     navigateTo("balloons");
   });
@@ -276,7 +326,7 @@
     document.getElementById("total-balloons-count").textContent = totalBalloons;
     countEl.textContent = "0";
 
-    const colors = ["#FFD1DC", "#FFB3C6", "#FF6F61", "#FFA07A", "#FFC6FF", "#FFADAD", "#FFD2FF", "#FFE5EC"];
+    const colors = ["#C9B0F5","#A67FE8","#7C3AED","#9B6AF0","#D1B8F7","#B89AEC","#E4D4FF","#8B5CF6"];
 
     CONFIG.balloonKeywords.forEach((word, index) => {
       const balloon = document.createElement("div");
@@ -333,7 +383,7 @@
               x: (rect.left + rect.width / 2) / window.innerWidth,
               y: (rect.top + rect.height / 2) / window.innerHeight
             },
-            colors: [bgColor, "#FFD700", "#FF6F61"]
+            colors: [bgColor, "#C8A84B", "#7C3AED"]
           });
         }
 
@@ -442,7 +492,8 @@
     setTimeout(() => {
       synth.playChime();
       if (typeof confetti === "function") {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.55 } });
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.55 },
+          colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF"] });
       }
       const msg = document.getElementById("cake-message");
       msg.textContent = "Make a wish! 🌟";
@@ -464,7 +515,8 @@
     giftBox.classList.add("opened");
 
     if (typeof confetti === "function") {
-      confetti({ particleCount: 60, spread: 70 });
+      confetti({ particleCount: 60, spread: 70,
+        colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF"] });
     }
 
     document.getElementById("gift-instruction").textContent = "Look inside! ✨";
@@ -644,7 +696,8 @@
     synth.playChime();
     heartFillBtn.classList.add("filled");
     if (typeof confetti === "function") {
-      confetti({ particleCount: 70, spread: 70 });
+      confetti({ particleCount: 70, spread: 70,
+        colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#C084FC"] });
     }
     setTimeout(() => navigateTo("finale"), 1600);
   });
@@ -674,33 +727,21 @@
 
   function launchFireworks() {
     if (typeof confetti !== "function") return;
-
     const duration = 8000;
     const end = Date.now() + duration;
-    const defaults = { startVelocity: 25, spread: 360, ticks: 50, zIndex: 0 };
-
+    const defaults = { startVelocity: 25, spread: 360, ticks: 50, zIndex: 0,
+      colors: ["#7C3AED","#A67FE8","#C9B0F5","#C8A84B","#E4D4FF","#5B21B6","#C084FC"] };
     const interval = setInterval(() => {
       const left = end - Date.now();
-      if (left <= 0 || currentSectionId !== "finale") {
-        clearInterval(interval);
-        return;
-      }
+      if (left <= 0 || currentSectionId !== "finale") { clearInterval(interval); return; }
       const count = Math.max(15, 40 * (left / duration));
-      confetti(Object.assign({}, defaults, {
-        particleCount: count,
-        origin: { x: 0.1 + Math.random() * 0.2, y: Math.random() * 0.4 }
-      }));
-      confetti(Object.assign({}, defaults, {
-        particleCount: count,
-        origin: { x: 0.7 + Math.random() * 0.2, y: Math.random() * 0.4 }
-      }));
+      confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.1 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
+      confetti(Object.assign({}, defaults, { particleCount: count, origin: { x: 0.7 + Math.random() * 0.2, y: Math.random() * 0.4 } }));
     }, 300);
   }
 
   // ─── 12. Replay ───
   document.getElementById("replay-flow-btn").addEventListener("click", () => {
-    synth.init();
-
     // Reset state flags
     balloonsPopped = 0;
     balloonsReady = false;
@@ -809,14 +850,10 @@
   }
 
   // ─── BOOT ───
-  // Loader exit after assets settle
-  setTimeout(() => {
-    const loader = document.getElementById("loader-screen");
-    if (!loader) return;
-    loader.style.opacity = "0";
-    setTimeout(() => { if (loader.parentNode) loader.remove(); }, 1000);
-    navigateTo("hero");
-    typeHeroSubtitle();
-  }, 2200);
+  // If intro was already played (session storage), boot immediately.
+  // Otherwise, startAppBoot() will be called by the intro completion callback.
+  if (_introAlreadyDone) {
+    startAppBoot();
+  }
 
 })();

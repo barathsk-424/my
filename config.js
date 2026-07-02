@@ -64,7 +64,7 @@ Yours,
   // Grand Finale Settings
   // Can be a YouTube embed video or a custom message
   // To use a YouTube video, get the embed link (e.g., https://www.youtube.com/embed/VIDEO_ID)
-  videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Replace with your video or leave empty for a message surprise
+  videoUrl: "", // Leave empty — no video
   finaleText: "Happy Birthday, My Star! ✨ May all your wishes come true today and always.",
 
   // Easter Eggs

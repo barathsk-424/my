@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="A beautiful and interactive birthday surprise web experience tailored with love.">
-  <meta name="theme-color" content="#FFD1DC">
+  <meta name="theme-color" content="#7C3AED">
   <title>Happy Birthday! ❤️</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -22,6 +22,57 @@
 
   <!-- Easter Egg Emoji Rain Container -->
   <div id="emoji-rain-shower" class="emoji-rain-container"></div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- GIFT BOX INTRO SCREEN                                    -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="gift-intro-screen" aria-label="Birthday gift intro">
+
+    <!-- Floating sparkles layer -->
+    <div id="gift-sparkles-layer" aria-hidden="true"></div>
+
+    <!-- Gold rays background -->
+    <div class="gift-rays" aria-hidden="true"></div>
+
+    <p class="gift-intro-above">A Special Gift Awaits You ❤️</p>
+
+    <!-- The 3-D gift box -->
+    <div id="gift-intro-box" role="button" tabindex="0" aria-label="Tap to open gift">
+
+      <!-- Box scene wrapper (perspective container) -->
+      <div class="gib-scene">
+
+        <!-- Lid -->
+        <div class="gib-lid">
+          <!-- Ribbon cross on lid -->
+          <div class="gib-lid-ribbon-v"></div>
+          <div class="gib-lid-ribbon-h"></div>
+          <!-- Bow -->
+          <div class="gib-bow">
+            <div class="gib-bow-left"></div>
+            <div class="gib-bow-right"></div>
+            <div class="gib-bow-center"></div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="gib-body">
+          <div class="gib-body-ribbon-v"></div>
+          <div class="gib-body-ribbon-h"></div>
+          <!-- Golden glow inside that bursts open -->
+          <div class="gib-inner-glow" aria-hidden="true"></div>
+        </div>
+
+      </div><!-- /.gib-scene -->
+
+      <!-- Particle canvas (hearts + confetti) -->
+      <div id="gib-particles" aria-hidden="true"></div>
+
+    </div><!-- /#gift-intro-box -->
+
+    <p class="gift-intro-below">Tap the gift to open your surprise</p>
+
+  </div><!-- /#gift-intro-screen -->
 
   <!-- Loader -->
   <div id="loader-screen">
@@ -162,7 +213,7 @@
     <!-- 7 · GRAND FINALE -->
     <section id="finale-section" class="story-section" aria-label="Grand Finale">
       <div class="premium-card">
-        <h2 class="section-title" style="color:var(--color-primary);text-shadow:0 0 12px rgba(255,209,220,0.3);">Happy Birthday! 🎉</h2>
+        <h2 class="section-title" style="color:#EDE0FF;text-shadow:0 0 20px rgba(200,160,255,0.55);">Happy Birthday! 🎉</h2>
 
         <div class="video-container" id="finale-video-box">
           <iframe id="finale-video" src="" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
