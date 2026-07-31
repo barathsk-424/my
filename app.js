@@ -498,191 +498,29 @@
   }
 
   // ─── 7. Candle Blowing Mini-Game ───
-  let candlesBlown = false;
-  let candleGameReady = false;
-  let micStream = null;
-  let micCheckInterval = null;
-  let micAudioCtx = null;
+  let candleController = null;
 
   function initCandleGame() {
-    if (candleGameReady) return;
-    candleGameReady = true;
+    if (candleController) return;
 
-    const blowBtn = document.getElementById("candle-blow-btn");
-    const micIndicator = document.getElementById("mic-status-indicator");
-
-    // Allow mic on HTTPS, localhost, 127.0.0.1, and file:// (local dev)
-    const isSecure = location.protocol === "https:"
-      || location.protocol === "file:"
-      || location.hostname === "localhost"
-      || location.hostname === "127.0.0.1";
-
-    // Track whether mic is currently active (not just attempted)
-    let micActive = false;
-    // Track consecutive frames above threshold for sustained-blow detection
-    let blowFrames = 0;
-    const BLOW_FRAMES_NEEDED = 8;   // ~300ms sustained blow at 100ms intervals
-    const BLOW_RMS_THRESHOLD = 0.08; // RMS amplitude threshold (0–1 range)
-
-    // ── Start mic — can be retried if previous attempt failed ──
-    function tryStartMic() {
-      if (micActive || candlesBlown) return;
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        micIndicator.textContent = "Tap the button to blow out the candles!";
-        return;
-      }
-
-      micIndicator.textContent = "Requesting microphone…";
-
-      navigator.mediaDevices.getUserMedia({
-        audio: true
-      }).then(stream => {
-        micStream = stream;
-        micActive = true;
-
-        // Create AudioContext after user gesture — guaranteed resumed on mobile
-        micAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        const startListening = () => {
-          const source = micAudioCtx.createMediaStreamSource(stream);
-          const analyser = micAudioCtx.createAnalyser();
-          analyser.fftSize = 2048;       // larger FFT → smoother time-domain data
-          analyser.smoothingTimeConstant = 0.3;
-          source.connect(analyser);
-          micIndicator.textContent = "🎤 Blow into your microphone!";
-          micIndicator.classList.add("mic-listening");
-
-          const bufLen = analyser.fftSize;
-          const timeDomainData = new Float32Array(bufLen);
-
-          blowFrames = 0;
-
-          micCheckInterval = setInterval(() => {
-            if (currentSectionId !== "cake" || candlesBlown) {
-              clearInterval(micCheckInterval);
-              stopMicrophone();
-              return;
-            }
-
-            // Use time-domain waveform data for RMS amplitude detection.
-            analyser.getFloatTimeDomainData(timeDomainData);
-
-            // Calculate RMS (root mean square) amplitude
-            let sumSquares = 0;
-            for (let i = 0; i < bufLen; i++) {
-              sumSquares += timeDomainData[i] * timeDomainData[i];
-            }
-            const rms = Math.sqrt(sumSquares / bufLen);
-            console.log("RMS:", rms);
-            if (rms > BLOW_RMS_THRESHOLD) {
-              blowFrames++;
-              // Visual feedback: show blow intensity
-              micIndicator.textContent = "🌬️ Keep blowing…!";
-              if (blowFrames >= BLOW_FRAMES_NEEDED) {
-                extinguishCandles();
-              }
-            } else {
-              blowFrames = Math.max(0, blowFrames - 1); // gradual decay
-              if (!candlesBlown) {
-                micIndicator.textContent = "🎤 Blow into your microphone!";
-              }
-            }
-          }, 100);
-        };
-
-        if (micAudioCtx.state === "suspended") {
-          micAudioCtx.resume().then(startListening).catch(startListening);
-        } else {
-          startListening();
+    candleController = new CandleController({
+      container: document.querySelector('.cake-container'),
+      candleWrapper: document.querySelector('.candle-wrapper'),
+      blowBtn: document.getElementById('candle-blow-btn'),
+      micIndicator: document.getElementById('mic-status-indicator'),
+      onExtinguish: function () {
+        synth.playChime();
+        const msg = document.getElementById("cake-message");
+        if (msg) {
+          msg.textContent = "Make a wish! 🌟";
+          msg.style.color = "var(--color-accent-gold)";
+          msg.style.fontSize = "1.4rem";
         }
-      }).catch(err => {
-        micActive = false; // allow retry on next tap
-        console.warn("Mic access denied or failed:", err);
-        micIndicator.textContent = "Tap the button to blow out the candles!";
-      });
-    }
-
-    // ── Blow button — works on both click (desktop) and touchend (mobile) ──
-    let manualFallbackReady = false;
-
-    function onBlowBtn(e) {
-      e.preventDefault(); // prevent ghost click on mobile
-
-      if (!micActive && !manualFallbackReady) {
-        // First tap: Wake the mic
-        tryStartMic();
-        // Change button to be a manual fallback
-        manualFallbackReady = true;
-        blowBtn.textContent = "Tap to Manually Extinguish 💨";
-      } else {
-        // Second tap or mic failed: Manual fallback
-        extinguishCandles();
+        setTimeout(() => navigateTo("gift"), 2000);
       }
-    }
-
-    blowBtn.addEventListener("click", onBlowBtn);
-    blowBtn.addEventListener("touchend", onBlowBtn, { passive: false });
-
-    // On desktop, try starting the mic immediately (no gesture restriction)
-    if (isSecure && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      tryStartMic();
-      manualFallbackReady = true;
-      blowBtn.textContent = "Tap to Manually Extinguish 💨";
-    } else {
-      // Mobile: hint user to tap button or blow
-      micIndicator.textContent = "Tap the button to enable microphone 🎤";
-      blowBtn.textContent = "Enable Microphone 🎤";
-    }
-  }
-
-  function stopMicrophone() {
-    if (micCheckInterval) {
-      clearInterval(micCheckInterval);
-      micCheckInterval = null;
-    }
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-    }
-    if (micAudioCtx && micAudioCtx.state !== "closed") {
-      micAudioCtx.close().catch(() => { });
-      micAudioCtx = null;
-    }
-  }
-
-  function extinguishCandles() {
-    if (candlesBlown) return;
-    candlesBlown = true;
-    synth.playBlow();
-    stopMicrophone();
-
-    // Update mic indicator to reflect success
-    const micInd = document.getElementById("mic-status-indicator");
-    if (micInd) {
-      micInd.classList.remove("mic-listening");
-      micInd.textContent = "✨ Candles extinguished!";
-    }
-
-    const flames = document.querySelectorAll(".flame");
-    flames.forEach((flame, i) => {
-      setTimeout(() => flame.classList.add("blown"), i * 200);
     });
 
-    setTimeout(() => {
-      synth.playChime();
-      if (typeof confetti === "function") {
-        confetti({
-          particleCount: 100, spread: 70, origin: { y: 0.55 },
-          colors: ["#7C3AED", "#A67FE8", "#C9B0F5", "#C8A84B", "#E4D4FF"]
-        });
-      }
-      const msg = document.getElementById("cake-message");
-      msg.textContent = "Make a wish! 🌟";
-      msg.style.color = "var(--color-accent-gold)";
-      msg.style.fontSize = "1.4rem";
-
-      setTimeout(() => navigateTo("gift"), 2800);
-    }, flames.length * 200 + 400);
+    candleController.init();
   }
 
   // ─── 8. Gift Box Mini-Game ───
