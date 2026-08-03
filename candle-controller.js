@@ -185,14 +185,9 @@ class CandleController {
     const deltaX = e.touches[0].clientX - this.touchStartX;
     const deltaY = e.touches[0].clientY - this.touchStartY;
 
-    // Detect upward or horizontal fast swipe over candle area
-    if (Math.abs(deltaX) > 40 || deltaY < -40) {
-      // Simulate blow effect via swipe
-      this.blowIntensity = Math.min(1.0, this.blowIntensity + 0.35);
-      this.blowHoldDuration += 250;
-      if (this.blowHoldDuration >= this.requiredHoldTime) {
-        this.extinguish();
-      }
+    // Detect upward or horizontal swipe — instant extinguish on mobile
+    if (Math.abs(deltaX) > 30 || deltaY < -30) {
+      this.extinguish();
     }
   }
 
@@ -206,34 +201,52 @@ class CandleController {
 
     if (this.micIndicator) this.micIndicator.textContent = "Requesting microphone permission…";
 
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+    // Request raw audio — disable browser processing that kills blow signals on mobile
+    const audioConstraints = {
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      },
+      video: false
+    };
+
+    navigator.mediaDevices.getUserMedia(audioConstraints)
       .then((stream) => {
         this.micStream = stream;
         this.micActive = true;
 
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Mobile browsers (especially iOS) suspend AudioContext until a user gesture.
+        // Since we're inside a click/tap handler, resume it now.
+        if (this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+
         const source = this.audioCtx.createMediaStreamSource(stream);
 
-        // High-pass filter to eliminate low frequency hums & vocal fundamentals
-        // 150 Hz keeps blow energy (peaks ~200-500 Hz) while filtering mains hum
+        // High-pass filter — 100 Hz is safe for mobile mics with lower gain
         const filter = this.audioCtx.createBiquadFilter();
         filter.type = 'highpass';
-        filter.frequency.value = 150;
+        filter.frequency.value = 100;
 
         this.analyser = this.audioCtx.createAnalyser();
         this.analyser.fftSize = 1024;
-        this.analyser.smoothingTimeConstant = 0.4;
+        this.analyser.smoothingTimeConstant = 0.3; // faster reaction on mobile
 
         source.connect(filter);
         filter.connect(this.analyser);
 
-        // Start Ambient Noise Auto-Calibration for 1 second
+        // Short calibration — 500ms is enough, gets user blowing faster
         this.isCalibrating = true;
         this.calibrationSamples = [];
         this.calibrationStartTime = performance.now();
 
+        console.log('[Candle] Mic started, AudioContext state:', this.audioCtx.state);
+
         if (this.micIndicator) {
-          this.micIndicator.textContent = "🎙️ Calibrating ambient noise…";
+          this.micIndicator.textContent = "🎙️ Calibrating…";
           this.micIndicator.classList.add("mic-listening");
         }
 
@@ -286,13 +299,13 @@ class CandleController {
     // 1-second auto-calibration
     if (this.isCalibrating) {
       this.calibrationSamples.push(rms);
-      if (now - this.calibrationStartTime >= 1000) {
+      if (now - this.calibrationStartTime >= 500) {
         this.isCalibrating = false;
         const avgNoise = this.calibrationSamples.reduce((a, b) => a + b, 0) / (this.calibrationSamples.length || 1);
-        this.ambientNoiseLevel = Math.max(0.003, avgNoise * 1.1);
+        this.ambientNoiseLevel = Math.max(0.002, avgNoise * 1.05);
         console.log('[Candle] Calibration done. Ambient:', this.ambientNoiseLevel.toFixed(4));
         if (this.micIndicator) {
-          this.micIndicator.textContent = "🎤 Listening! Blow into microphone…";
+          this.micIndicator.textContent = "🎤 Blow now! 💨";
         }
       }
       return;
