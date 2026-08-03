@@ -29,7 +29,7 @@ class CandleController {
     // Blow physical tracking
     this.blowIntensity = 0; // 0 to 1 smooth value
     this.blowHoldDuration = 0; // in milliseconds
-    this.requiredHoldTime = 350; // ~0.35s — very forgiving, any normal blow is enough
+    this.requiredHoldTime = 180; // ~0.2s — instant extinguish on any gentle blow
     this.lastFrameTime = performance.now();
 
     // Canvas particle system (flames, smoke, sparks)
