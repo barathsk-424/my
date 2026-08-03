@@ -173,7 +173,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transform: translateY(25px) scale(0.97);
-  transition: opacity 1s var(--ease-premium), transform 1s var(--ease-premium);
+  transition: opacity 0.35s var(--ease-premium), transform 0.35s var(--ease-premium);
   z-index: 10;
   overflow-y: auto;
   overflow-x: hidden;

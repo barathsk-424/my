@@ -280,7 +280,7 @@
       } else if (el.classList.contains("active")) {
         el.classList.remove("active");
         el.classList.add("leaving");
-        setTimeout(() => el.classList.remove("leaving"), 1200);
+        setTimeout(() => el.classList.remove("leaving"), 400);
       } else {
         el.classList.remove("active", "leaving");
       }
@@ -509,6 +509,11 @@
       blowBtn: document.getElementById('candle-blow-btn'),
       micIndicator: document.getElementById('mic-status-indicator'),
       onExtinguish: function () {
+        // Prevent duplicate execution
+        if (window.__candleCompleted) return;
+        window.__candleCompleted = true;
+
+        // Play chime and update message
         synth.playChime();
         const msg = document.getElementById("cake-message");
         if (msg) {
@@ -516,7 +521,18 @@
           msg.style.color = "var(--color-accent-gold)";
           msg.style.fontSize = "1.4rem";
         }
-        setTimeout(() => navigateTo("gift"), 2000);
+
+        // Navigate to next section immediately
+        console.log('[App] onExtinguish — navigating to gift now');
+        navigateTo("gift");
+
+        // Clean up controller on next tick (after extinguish() call stack completes)
+        setTimeout(() => {
+          if (candleController) {
+            candleController.destroy();
+            candleController = null;
+          }
+        }, 0);
       }
     });
 

@@ -29,7 +29,7 @@ class CandleController {
     // Blow physical tracking
     this.blowIntensity = 0; // 0 to 1 smooth value
     this.blowHoldDuration = 0; // in milliseconds
-    this.requiredHoldTime = 1200; // ~1.2s continuous blow needed
+    this.requiredHoldTime = 350; // ~0.35s — very forgiving, any normal blow is enough
     this.lastFrameTime = performance.now();
 
     // Canvas particle system (flames, smoke, sparks)
@@ -214,10 +214,11 @@ class CandleController {
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = this.audioCtx.createMediaStreamSource(stream);
 
-        // High-pass filter to eliminate low frequency hums & vocal fundamentals (below ~300Hz)
+        // High-pass filter to eliminate low frequency hums & vocal fundamentals
+        // 150 Hz keeps blow energy (peaks ~200-500 Hz) while filtering mains hum
         const filter = this.audioCtx.createBiquadFilter();
         filter.type = 'highpass';
-        filter.frequency.value = 350; // Blow sound has higher wind/white noise frequency content
+        filter.frequency.value = 150;
 
         this.analyser = this.audioCtx.createAnalyser();
         this.analyser.fftSize = 1024;
@@ -288,21 +289,22 @@ class CandleController {
       if (now - this.calibrationStartTime >= 1000) {
         this.isCalibrating = false;
         const avgNoise = this.calibrationSamples.reduce((a, b) => a + b, 0) / (this.calibrationSamples.length || 1);
-        this.ambientNoiseLevel = Math.max(0.01, avgNoise * 1.5);
+        this.ambientNoiseLevel = Math.max(0.003, avgNoise * 1.1);
+        console.log('[Candle] Calibration done. Ambient:', this.ambientNoiseLevel.toFixed(4));
         if (this.micIndicator) {
-          this.micIndicator.textContent = "🎤 Listening! Blow into microphone continuous 1-2 sec";
+          this.micIndicator.textContent = "🎤 Listening! Blow into microphone…";
         }
       }
       return;
     }
 
-    // Dynamic threshold above ambient noise
-    const blowThreshold = this.ambientNoiseLevel + 0.04;
+    // Dynamic threshold above ambient noise — kept low so real blows always pass
+    const blowThreshold = this.ambientNoiseLevel + 0.006;
 
     if (rms > blowThreshold) {
       // Calculate target blow intensity scaled 0..1
-      const rawIntensity = Math.min(1.0, (rms - blowThreshold) / 0.15);
-      this.blowIntensity += (rawIntensity - this.blowIntensity) * 0.2;
+      const rawIntensity = Math.min(1.0, (rms - blowThreshold) / 0.03);
+      this.blowIntensity += (rawIntensity - this.blowIntensity) * 0.25;
       this.blowHoldDuration += delta;
 
       if (this.micIndicator) {
@@ -313,17 +315,18 @@ class CandleController {
       this.playBlowSound(this.blowIntensity);
 
       if (this.blowHoldDuration >= this.requiredHoldTime) {
+        console.log('[Candle] Hold time reached — calling extinguish()');
         this.extinguish();
       }
     } else {
-      // Decay blow hold when quiet
-      this.blowIntensity += (0 - this.blowIntensity) * 0.15;
-      this.blowHoldDuration = Math.max(0, this.blowHoldDuration - delta * 1.2);
+      // Almost no decay — once you start blowing, progress is kept
+      this.blowIntensity += (0 - this.blowIntensity) * 0.05;
+      this.blowHoldDuration = Math.max(0, this.blowHoldDuration - delta * 0.08);
 
       this.stopBlowSound();
 
       if (this.micIndicator && !this.isBlown) {
-        this.micIndicator.textContent = "🎤 Blow into your microphone continuous 1-2 sec";
+        this.micIndicator.textContent = "🎤 Blow into your microphone…";
       }
     }
   }
@@ -409,6 +412,7 @@ class CandleController {
   extinguish() {
     if (this.isBlown) return;
     this.isBlown = true;
+    console.log('[Candle] extinguish() called');
     this.stopBlowSound();
     this.stopMicrophone();
 
@@ -439,6 +443,7 @@ class CandleController {
         });
       }
     });
+    console.log('[Candle] Flame removed, smoke started');
 
     // Soft celebration confetti call
     if (typeof confetti === 'function') {
@@ -450,10 +455,9 @@ class CandleController {
       });
     }
 
-    // Trigger parent callback to navigate after smooth transition
-    setTimeout(() => {
-      this.onExtinguish();
-    }, 2400);
+    // Trigger parent callback immediately
+    console.log('[Candle] onExtinguish callback fired');
+    this.onExtinguish();
   }
 
   updateLoop(timestamp) {
