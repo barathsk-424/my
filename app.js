@@ -105,7 +105,7 @@
         introScreen.classList.add("exit");
 
         setTimeout(() => {
-          introScreen.classList.add("hidden");
+          introScreen.remove();
           sessionStorage.setItem("giftIntroPlayed", "1");
 
           // Restore and kick off normal app boot
@@ -257,7 +257,7 @@
     const dur = Math.random() * 3 + 6;
     el.style.animationDuration = dur + "s";
     bgHeartsContainer.appendChild(el);
-    setTimeout(() => el.remove(), dur * 1000 + 500);
+    el.addEventListener("animationend", () => el.remove());
   }
   setInterval(spawnFloatingHeart, 900);
 
@@ -943,7 +943,7 @@
         el.style.left = Math.random() * 100 + "vw";
         el.style.animationDuration = (Math.random() * 2 + 2) + "s";
         rainContainer.appendChild(el);
-        setTimeout(() => el.remove(), 4500);
+        el.addEventListener("animationend", () => el.remove());
       }, i * 55);
     }
   }

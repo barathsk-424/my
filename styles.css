@@ -1236,3 +1236,24 @@ body {
   80%  { opacity: 0.9; }
   100% { transform: translate(var(--tx,80px), var(--ty,-120px)) rotate(var(--rot,270deg)) scale(0.8); opacity: 0; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Disable heavy glassmorphism blurs on mobile GPUs */
+  .premium-card, 
+  .music-toggle, 
+  .hero-image-wrapper {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Use a slightly darker solid fallback color instead of blur */
+  .premium-card {
+    background: rgba(25, 8, 58, 0.95) !important;
+  }
+  .music-toggle {
+    background: rgba(124, 58, 237, 0.9) !important;
+  }
+}
